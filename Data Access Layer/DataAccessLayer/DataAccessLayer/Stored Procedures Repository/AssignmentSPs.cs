@@ -22,10 +22,10 @@ public class AssignmentSPs
             "EXEC SP_DeleteAssignment @AssignmentID = {0}", assignmentId);
     }
 
-    public async Task<List<T>> GetAssignmentByMixedIdAsync<T>(int? eventId, int? toDoId, int? stepId, int? questionId, int? cardId) where T : class
+    public async Task<List<T>> GetAssignmentByElementIdAsync<T>(int? eventId, int? toDoId, int? stepId, int? questionId, int? cardId) where T : class
     {
         return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetAssignmentByMixedID @EventID = {0}, @To_DoID = {1}, @StepID = {2}, @QuestionID = {3}, @CardID = {4}",
+            "EXEC SP_GetAssignmentByElementID @EventID = {0}, @To_DoID = {1}, @StepID = {2}, @QuestionID = {3}, @CardID = {4}",
             eventId, toDoId, stepId, questionId, cardId).ToListAsync();
     }
 }

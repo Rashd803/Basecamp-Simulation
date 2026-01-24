@@ -23,10 +23,10 @@ public class ProjectSPs
             "EXEC SP_DeleteProject @ProjectID = {0}", projectId);
     }
 
-    public async Task UpdateProjectPublishingInfoAsync(int projectId, int? publishingInfoId)
+    public async Task UpdateProjectPublishingInfoAsync(int projectId, string newname, int memberId)
     {
         await _context.Database.ExecuteSqlRawAsync(
-            "UPDATE Projects SET PublishingInfoID = {1} WHERE ID = {0}",
-            projectId, publishingInfoId);
+            "SP_UpdateProject projectId = {0}, newname = {1}, memberId = {2}",
+            projectId, newname, memberId);
     }
 }
