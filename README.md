@@ -1,7 +1,7 @@
 ## Current Status
 - [x] Database design and development.
-- [ ] Data Access Layer (Next Phase).
-- [ ] Business Layer.
+- [x] Data Access Layer.
+- [ ] Business Layer (Current Stage).
 - [ ] RESTful APIs Development & Securing.
 
 ---
