@@ -12,6 +12,8 @@ public partial class VwToDoViewByToDoId
     public bool Checked { get; set; }
 
     public bool IsPrivate { get; set; }
+    
+    public int NoteID { get; set; }
 
     public string? NoteText { get; set; }
 

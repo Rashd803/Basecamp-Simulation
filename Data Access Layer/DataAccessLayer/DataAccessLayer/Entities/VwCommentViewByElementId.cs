@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DataAccessLayer.Entities;
 
 namespace DataAccessLayer.Entities;
 
@@ -14,9 +15,9 @@ public partial class VwCommentViewByElementId
     public int? ToDoId { get; set; }
 
     public int? CardId { get; set; }
-
     public int? StepId { get; set; }
-
+    public int NoteID { get; set; }
+    
     public string? Text { get; set; }
 
     public string? Urllink { get; set; }

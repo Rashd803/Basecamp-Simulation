@@ -16,6 +16,7 @@ public partial class VwEventViewByEventId
     public string? EventUrllink { get; set; }
 
     public bool IsPrivate { get; set; }
+    public bool NoteID { get; set; }
 
     public string? Text { get; set; }
 

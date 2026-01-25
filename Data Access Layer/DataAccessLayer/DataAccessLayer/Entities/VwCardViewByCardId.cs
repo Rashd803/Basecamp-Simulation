@@ -7,10 +7,13 @@ public partial class VwCardViewByCardId
 {
     public int CardId { get; set; }
 
-    public string ColumnTitle { get; set; } = null!;
+    public string ColumnTitle { get; set; }
 
-    public string CardTitle { get; set; } = null!;
+    public string CardTitle { get; set; }
 
+    public int NoteID { get; set; }
+    public string? NoteText { get; set; } = null!;
+    public string? URLLink  { get; set; } = null!;
     public DateTime? FromDate { get; set; }
 
     public DateTime? ToDate { get; set; }

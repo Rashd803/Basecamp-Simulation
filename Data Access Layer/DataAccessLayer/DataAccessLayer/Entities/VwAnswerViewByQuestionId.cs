@@ -9,6 +9,8 @@ public partial class VwAnswerViewByQuestionId
 
     public string? Text { get; set; }
 
+    public string NoteID { get; set; }
+
     public string? Urllink { get; set; }
 
     public DateTime PublishedAt { get; set; }

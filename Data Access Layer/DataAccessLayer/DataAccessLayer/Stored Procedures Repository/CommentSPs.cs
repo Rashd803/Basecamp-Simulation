@@ -29,10 +29,10 @@ public class CommentSPs
             "EXEC SP_DeleteComment @CommentID = {0}", commentId);
     }
 
-    public async Task<List<T>> GetCommentByNoteIdAsync<T>(int? eventId, int? toDoId, int? stepId, int? messageId, int? documentId, int? cardId) where T : class
+    public async Task<List<T>> SP_GetCommentByElementIDAsync<T>(int? eventId, int? toDoId, int? stepId, int? messageId, int? documentId, int? cardId) where T : class
     {
         return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetCommentByNoteID @EventID = {0}, @To_DoID = {1}, @StepID = {2}, @MessageID = {3}, @DocumentID = {4}, @CardID = {5}",
+            "EXEC SP_SP_GetCommentByElementID @EventID = {0}, @To_DoID = {1}, @StepID = {2}, @MessageID = {3}, @DocumentID = {4}, @CardID = {5}",
             eventId, toDoId, stepId, messageId, documentId, cardId).ToListAsync();
     }
 }

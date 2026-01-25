@@ -28,4 +28,16 @@ public class ColumnSPs
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_DeleteColumn @ColumnID = {0}", columnId);
     }
+
+    public async Task GetColumnByProjectIDAsync(int projectid, bool memberorclient)
+    {
+        await _context.Database.ExecuteSqlRawAsync(
+            "EXEC SP_GetColumnByProjectID @ProjectID = {0}, @MemberOrClient = {1}", projectid, memberorclient);
+    }
+
+    public async Task GetColumnByColumnIDAsync(int columnId)
+    {
+        await _context.Database.ExecuteSqlRawAsync(
+            "EXEC SP_GetColumnByColumnID @ColumnID = {0}", columnId);
+    }
 }

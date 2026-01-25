@@ -9,6 +9,8 @@ public partial class VwMessageBoardByMessageId
 
     public string? Title { get; set; }
 
+    public int NoteID { get; set; }
+
     public string? Text { get; set; }
 
     public string? Urllink { get; set; }

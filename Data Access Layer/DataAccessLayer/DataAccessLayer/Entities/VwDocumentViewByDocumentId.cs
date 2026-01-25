@@ -13,6 +13,8 @@ public partial class VwDocumentViewByDocumentId
 
     public bool IsPrivate { get; set; }
 
+    public int NoteID { get; set; }
+
     public string? Text { get; set; }
 
     public string? Urllink { get; set; }
