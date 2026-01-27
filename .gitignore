@@ -1,6 +1,6 @@
+*.sln
+*.csproj
 bin/
 obj/
-sln/
-csproj/
 .vs/
 *.user
