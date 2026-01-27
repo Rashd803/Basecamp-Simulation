@@ -13,6 +13,9 @@ namespace DataAccessLayer.Stored_Procedures_Repository
         private readonly AppDbContext _context;
         public ChatSPs(AppDbContext context) { _context = context; }
 
+        /// <summary>
+        /// Adds a message to the chat.
+        /// </summary>
         public async Task AddMessageToChatAsync(string text, int projectId, int memberId, bool isPrivate)
         {
             await _context.Database.ExecuteSqlRawAsync(
@@ -20,6 +23,9 @@ namespace DataAccessLayer.Stored_Procedures_Repository
                 text, projectId, memberId, isPrivate);
         }
 
+        /// <summary>
+        /// Retrieves the chat history for a project.
+        /// </summary>
         public async Task<List<T>> GetChatByProjectIdAsync<T>(int projectId, bool memberOrClient) where T : class
         {
             return await _context.Set<T>()
@@ -30,6 +36,9 @@ namespace DataAccessLayer.Stored_Procedures_Repository
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Updates a chat message.
+        /// </summary>
         public async Task UpdateChatAsync(int chatId, string text, bool isPrivate)
         {
             await _context.Database.ExecuteSqlRawAsync(
@@ -37,6 +46,9 @@ namespace DataAccessLayer.Stored_Procedures_Repository
                 chatId, text, isPrivate);
         }
 
+        /// <summary>
+        /// Deletes a message from the chat.
+        /// </summary>
         public async Task DeleteMessageFromChatAsync(int chatId)
         {
             await _context.Database.ExecuteSqlRawAsync(

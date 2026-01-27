@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwClientProjectConfig : IEntityTypeConfiguration<VwClientProject>
+public class VwClientProjectConfig : IEntityTypeConfiguration<ClientProjectDTO>
 {
-    public void Configure(EntityTypeBuilder<VwClientProject> entity)
+    public void Configure(EntityTypeBuilder<ClientProjectDTO> entity)
     {
         entity.HasNoKey().ToView("VW_ClientProject");
         entity.Property(e => e.ClientId).HasColumnName("ClientID");

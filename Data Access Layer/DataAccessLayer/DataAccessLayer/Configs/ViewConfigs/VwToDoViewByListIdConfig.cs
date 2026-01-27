@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwToDoViewByListIdConfig : IEntityTypeConfiguration<VwToDoViewByListId>
+public class VwToDoViewByListIdConfig : IEntityTypeConfiguration<ToDoByListIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwToDoViewByListId> entity)
+    public void Configure(EntityTypeBuilder<ToDoByListIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_ToDoViewByListID");
         entity.Property(e => e.FromDate).HasColumnType("datetime");

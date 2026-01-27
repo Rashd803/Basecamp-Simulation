@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwChatViewByProjectIdConfig : IEntityTypeConfiguration<VwChatViewByProjectId>
+public class VwChatViewByProjectIdConfig : IEntityTypeConfiguration<ChatByProjectIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwChatViewByProjectId> entity)
+    public void Configure(EntityTypeBuilder<ChatByProjectIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_ChatViewByProjectID");
         entity.Property(e => e.Username). HasMaxLength(100);

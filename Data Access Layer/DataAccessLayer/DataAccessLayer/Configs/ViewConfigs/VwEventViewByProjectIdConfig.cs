@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwEventViewByProjectIdConfig : IEntityTypeConfiguration<VwEventViewByProjectId>
+public class VwEventViewByProjectIdConfig : IEntityTypeConfiguration<EventByProjectIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwEventViewByProjectId> entity)
+    public void Configure(EntityTypeBuilder<EventByProjectIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_EventViewByProjectID");
         entity.Property(e => e.FromDate).HasColumnType("datetime");

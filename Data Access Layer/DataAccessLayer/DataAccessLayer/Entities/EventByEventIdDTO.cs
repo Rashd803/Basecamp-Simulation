@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwEventViewByEventId
+public partial class EventByEventIdDTO
 {
     public int EventId { get; set; }
 

@@ -13,20 +13,29 @@ public class MessageBoardSPs
         _context = context;
     }
 
-    public async Task AddMessageToBoardAsync(int projectId, string? title, int memberId, string? noteText, string? noteUrlLink, string? filePath, string? fileCaption, bool isPrivate)
+    /// <summary>
+    /// Adds a new message to the message board.
+    /// </summary>
+    public async Task AddMessageToBoardAsync(int projectId, string? title, int memberId, bool isPrivate, string? noteText = null, string? noteUrlLink = null, string? filePath = null, string? fileCaption = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_AddMessageToBoard @ProjectID = {0}, @Title = {1}, @MemberID = {2}, @NoteText = {3}, @NoteURLLink = {4}, @FilePath = {5}, @FileCaption = {6}, @IsPrivate = {7}",
             projectId, title, memberId, noteText, noteUrlLink, filePath, fileCaption, isPrivate);
     }
 
-    public async Task UpdateMessageInBoardAsync(int messageBoardId, string title, string? noteText, string? noteUrlLink, int? fileId, string? filePath, string? fileCaption, bool isPrivate)
+    /// <summary>
+    /// Updates an existing message on the message board.
+    /// </summary>
+    public async Task UpdateMessageInBoardAsync(int messageBoardId, string title, bool isPrivate, string? noteText = null, string? noteUrlLink = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_UpdateMessageInBoard @MessageBoardID = {0}, @Title = {1}, @NoteText = {2}, @NoteURLLink = {3}, @FileID = {4}, @FilePath = {5}, @FileCaption = {6}, @IsPrivate = {7}",
-            messageBoardId, title, noteText, noteUrlLink, fileId, filePath, fileCaption, isPrivate);
+            "EXEC SP_UpdateMessageInBoard @MessageBoardID = {0}, @Title = {1}, @NoteText = {2}, @NoteURLLink = {3}, @IsPrivate = {4}",
+            messageBoardId, title, noteText, noteUrlLink, isPrivate);
     }
 
+    /// <summary>
+    /// Deletes a message from the message board.
+    /// </summary>
     public async Task DeleteMessageInBoardAsync(int messageBoardId)
     {
         await _context.Database.ExecuteSqlRawAsync(
@@ -34,6 +43,9 @@ public class MessageBoardSPs
             messageBoardId);
     }
 
+    /// <summary>
+    /// Retrieves a message from the message board by its ID.
+    /// </summary>
     public async Task<T?> GetMessageBoardByMessageIdAsync<T>(int messageId) where T : class
     {
         var results = await _context.Set<T>()
@@ -45,6 +57,9 @@ public class MessageBoardSPs
         return results.FirstOrDefault();
     }
 
+    /// <summary>
+    /// Retrieves all messages from the message board for a given project ID.
+    /// </summary>
     public async Task<List<T>> GetMessageBoardByProjectIdAsync<T>(int projectId, bool memberOrClient) where T : class
     {
         return await _context.Set<T>()

@@ -9,6 +9,9 @@ public class ColumnSPs
     private readonly AppDbContext _context;
     public ColumnSPs(AppDbContext context) { _context = context; }
 
+    /// <summary>
+    /// Adds a new column to a project.
+    /// </summary>
     public async Task AddColumnAsync(int memberId, string title, string description, int projectId, bool isPrivate)
     {
         await _context.Database.ExecuteSqlRawAsync(
@@ -16,19 +19,28 @@ public class ColumnSPs
             memberId, title, description, projectId, isPrivate);
     }
 
-    public async Task UpdateColumnAsync(int columnId, string? title, string? description, bool isPrivate)
+    /// <summary>
+    /// Updates an existing column.
+    /// </summary>
+    public async Task UpdateColumnAsync(int columnId, string? title = null, string? description = null, bool isPrivate)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_UpdateColumn @ColumnID = {0}, @Title = {1}, @Description = {2}, @IsPrivate = {3}",
             columnId, title, description, isPrivate);
     }
 
+    /// <summary>
+    /// Deletes a column.
+    /// </summary>
     public async Task DeleteColumnAsync(int columnId)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_DeleteColumn @ColumnID = {0}", columnId);
     }
 
+    /// <summary>
+    /// Retrieves all columns for a given project ID.
+    /// </summary>
     public async Task <List<T>> GetColumnByProjectIDAsync<T>(int projectid, bool memberorclient) where T : class
     {
         return await _context.Set<T>()
@@ -37,6 +49,9 @@ public class ColumnSPs
             .ToListAsync();
     }
 
+    /// <summary>
+    /// Retrieves a column by its ID.
+    /// </summary>
     public async Task<T?> GetColumnByColumnIDAsync<T>(int columnId) where T : class
     {
        var results = await _context.Set<T>()

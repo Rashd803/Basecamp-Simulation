@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwInvitationConfig : IEntityTypeConfiguration<VwInvitation>
+public class VwInvitationConfig : IEntityTypeConfiguration<InvitationDTO>
 {
-    public void Configure(EntityTypeBuilder<VwInvitation> entity)
+    public void Configure(EntityTypeBuilder<InvitationDTO> entity)
     {
         entity.HasNoKey().ToView("VW_Invitation");
         entity.Property(e => e.CompanyName).HasMaxLength(100);

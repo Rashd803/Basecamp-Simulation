@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwMessageBoardByMessageIdConfig : IEntityTypeConfiguration<VwMessageBoardByMessageId>
+public class VwMessageBoardByMessageIdConfig : IEntityTypeConfiguration<MessageBoardByMessageIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwMessageBoardByMessageId> entity)
+    public void Configure(EntityTypeBuilder<MessageBoardByMessageIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_MessageBoardByMessageID");
         entity.Property(e => e.MessageId).HasColumnName("MessageID");

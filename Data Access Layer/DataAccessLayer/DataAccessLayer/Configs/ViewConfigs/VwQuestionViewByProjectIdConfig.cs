@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwQuestionViewByProjectIdConfig : IEntityTypeConfiguration<VwQuestionViewByProjectId>
+public class VwQuestionViewByProjectIdConfig : IEntityTypeConfiguration<QuestionByProjectIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwQuestionViewByProjectId> entity)
+    public void Configure(EntityTypeBuilder<QuestionByProjectIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_QuestionViewByProjectID");
         entity.Property(e => e.FromDate).HasColumnType("datetime");

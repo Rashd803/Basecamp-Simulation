@@ -9,26 +9,38 @@ public class EventSPs
     private readonly AppDbContext _context;
     public EventSPs(AppDbContext context) { _context = context; }
 
-    public async Task AddEventAsync(string name, int projectId, DateTime fromDate, DateTime toDate, int memberId, string? urlLink, string? noteText, string? noteUrlLink, string? filePath, string? fileCaption, bool isPrivate)
+    /// <summary>
+    /// Adds a new event to a project.
+    /// </summary>
+    public async Task AddEventAsync(string name, int projectId, DateTime fromDate, DateTime toDate, bool isPrivate, int memberId, string? urlLink = null, string? noteText = null, string? noteUrlLink = null, string? filePath = null, string? fileCaption = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_AddEvent @Name = {0}, @ProjectID = {1}, @FromDate = {2}, @ToDate = {3}, @MemberID = {4}, @URLLink = {5}, @NoteText = {6}, @NoteURLLink = {7}, @FilePath = {8}, @FileCaption = {9}, @IsPrivate = {10}",
             name, projectId, fromDate, toDate, memberId, urlLink, noteText, noteUrlLink, filePath, fileCaption, isPrivate);
     }
 
-    public async Task UpdateEventAsync(int eventId, string name, DateTime fromDate, DateTime toDate, string? urlLink, string? noteText, string? noteUrlLink, string? filePath, string? fileCaption, bool isPrivate)
+    /// <summary>
+    /// Updates an existing event.
+    /// </summary>
+    public async Task UpdateEventAsync(int eventId, string name, DateTime fromDate, DateTime toDate, bool isPrivate, string? urlLink = null, string? noteText = null, string? noteUrlLink = null, string? filePath = null, string? fileCaption = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_UpdateEvent @EventID = {0}, @Name = {1}, @FromDate = {2}, @ToDate = {3}, @URLLink = {4}, @NoteText = {5}, @NoteURLLink = {6}, @FilePath = {7}, @FileCaption = {8}, @IsPrivate = {9}",
             eventId, name, fromDate, toDate, urlLink, noteText, noteUrlLink, filePath, fileCaption, isPrivate);
     }
 
+    /// <summary>
+    /// Deletes an event.
+    /// </summary>
     public async Task DeleteEventAsync(int eventId)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_DeleteEvent @EventID = {0}", eventId);
     }
      
+    /// <summary>
+    /// Retrieves an event by its ID.
+    /// </summary>
     public async Task<T?> GetEventByEventIdAsync<T>(int eventId) where T : class
     {
         var results = await _context.Set<T>().FromSqlRaw("EXEC SP_GetEventByEventID @EventID = {0}", eventId)
@@ -38,6 +50,9 @@ public class EventSPs
         return results.FirstOrDefault();
     }
 
+    /// <summary>
+    /// Retrieves all events for a given project ID.
+    /// </summary>
     public async Task<List<T>> GetEventByProjectIdAsync<T>(int projectId, bool memberOrClient) where T : class
     {
         return await _context.Set<T>()

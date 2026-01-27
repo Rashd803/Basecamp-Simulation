@@ -3,19 +3,19 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwDocumentViewByDocumentId
+public partial class ToDoByToDoIdDTO
 {
-    public int DocumentId { get; set; }
+    public int ToDoId { get; set; }
 
-    public string FilePath { get; set; } = null!;
+    public string Text { get; set; } = null!;
 
-    public string DocName { get; set; } = null!;
+    public bool Checked { get; set; }
 
     public bool IsPrivate { get; set; }
-
+    
     public int NoteID { get; set; }
 
-    public string? Text { get; set; }
+    public string? NoteText { get; set; }
 
     public string? Urllink { get; set; }
 

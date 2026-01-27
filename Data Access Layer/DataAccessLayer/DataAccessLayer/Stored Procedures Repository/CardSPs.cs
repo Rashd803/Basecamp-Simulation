@@ -9,26 +9,38 @@ public class CardSPs
     private readonly AppDbContext _context;
     public CardSPs(AppDbContext context) { _context = context; }
 
-    public async Task AddCardToColumnAsync(int memberId, int projectId, string title, DateTime? fromDate, DateTime? toDate, int columnId, string? noteText, string? noteUrlLink, string? filePath, string? fileCaption)
+    /// <summary>
+    /// Adds a new card to a column.
+    /// </summary>
+    public async Task AddCardToColumnAsync(int memberId, int projectId, int columnId, string title, DateTime? fromDate = null, DateTime? toDate = null, string? noteText = null, string? noteUrlLink = null, string? filePath = null, string? fileCaption = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_AddCardToColumn @MemberID = {0}, @ProjectID = {1}, @Title = {2}, @FromDate = {3}, @ToDate = {4}, @ColumnID = {5}, @NoteText = {6}, @NoteURLLink = {7}, @FilePath = {8}, @FileCaption = {9}",
             memberId, projectId, title, fromDate, toDate, columnId, noteText, noteUrlLink, filePath, fileCaption);
     }
 
-    public async Task UpdateCardAsync(int cardId, string title, DateTime? fromDate, DateTime? toDate, string? noteText, string? noteUrlLink, string? filePath, string? fileCaption)
+    /// <summary>
+    /// Updates an existing card.
+    /// </summary>
+    public async Task UpdateCardAsync(int cardId, string title, DateTime? fromDate = null, DateTime? toDate = null, string? noteText = null, string? noteUrlLink = null, string? filePath = null, string? fileCaption = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_UpdateCard @CardID = {0}, @Title = {1}, @FromDate = {2}, @ToDate = {3}, @NoteText = {4}, @NoteURLLink = {5}, @FilePath = {6}, @FileCaption = {7}",
             cardId, title, fromDate, toDate, noteText, noteUrlLink, filePath, fileCaption);
     }
 
+    /// <summary>
+    /// Deletes a card.
+    /// </summary>
     public async Task DeleteCardAsync(int cardId)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_DeleteCard @CardID = {0}", cardId);
     }
 
+    /// <summary>
+    /// Retrieves a card by its ID.
+    /// </summary>
     public async Task<T?> GetCardByCardIdAsync<T>(int cardId) where T : class
     {
         var results = await _context.Set<T>()
@@ -39,6 +51,9 @@ public class CardSPs
         return results.FirstOrDefault();
     }
 
+    /// <summary>
+    /// Retrieves all cards in a specific column.
+    /// </summary>
     public async Task<List<T>> GetCardsByColumnIdAsync<T>(int columnId, bool memberOrClient) where T : class
     {
         return await _context.Set<T>()

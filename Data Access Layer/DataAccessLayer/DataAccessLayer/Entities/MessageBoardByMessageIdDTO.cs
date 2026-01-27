@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwMessageBoardByMessageId
+public partial class MessageBoardByMessageIdDTO
 {
     public int MessageId { get; set; }
 

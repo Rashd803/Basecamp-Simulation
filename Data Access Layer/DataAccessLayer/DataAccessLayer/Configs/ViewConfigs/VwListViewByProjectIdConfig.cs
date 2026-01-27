@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwListViewByProjectIdConfig : IEntityTypeConfiguration<VwListViewByProjectId>
+public class VwListViewByProjectIdConfig : IEntityTypeConfiguration<ListByProjectIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwListViewByProjectId> entity)
+    public void Configure(EntityTypeBuilder<ListByProjectIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_ListViewByProjectID");
         entity.Property(e => e.Caption).HasMaxLength(200);

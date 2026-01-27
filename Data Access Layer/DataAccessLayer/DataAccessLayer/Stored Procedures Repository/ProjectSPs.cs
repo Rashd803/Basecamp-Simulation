@@ -9,7 +9,10 @@ public class ProjectSPs
     private readonly AppDbContext _context;
     public ProjectSPs(AppDbContext context) { _context = context; }
 
-    public async Task AddProjectAsync(string title, string? description, int memberId)
+    /// <summary>
+    /// Adds a new project.
+    /// </summary>
+    public async Task AddProjectAsync(string title, int memberId, string? description = null)
     {
         // Calls the stored procedure to create a new project and handle its PublishingInfo
         await _context.Database.ExecuteSqlRawAsync(
@@ -17,12 +20,18 @@ public class ProjectSPs
             title, description, memberId);
     }
 
+    /// <summary>
+    /// Deletes a project.
+    /// </summary>
     public async Task DeleteProjectAsync(int projectId)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_DeleteProject @ProjectID = {0}", projectId);
     }
 
+    /// <summary>
+    /// Updates the publishing information of a project.
+    /// </summary>
     public async Task UpdateProjectPublishingInfoAsync(int projectId, string newname, int memberId)
     {
         await _context.Database.ExecuteSqlRawAsync(

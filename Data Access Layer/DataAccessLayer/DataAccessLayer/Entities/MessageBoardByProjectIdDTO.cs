@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwMessageBoardByProjectId
+public partial class MessageBoardByProjectIdDTO
 {
+    public int MessageID { get; set; }
     public string? Title { get; set; }
 
     public string Name { get; set; } = null!;

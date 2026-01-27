@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwMessageBoardByProjectIdConfig : IEntityTypeConfiguration<VwMessageBoardByProjectId>
+public class VwMessageBoardByProjectIdConfig : IEntityTypeConfiguration<MessageBoardByProjectIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwMessageBoardByProjectId> entity)
+    public void Configure(EntityTypeBuilder<MessageBoardByProjectIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_MessageBoardByProjectID");
         entity.Property(e => e.Name).HasMaxLength(100);

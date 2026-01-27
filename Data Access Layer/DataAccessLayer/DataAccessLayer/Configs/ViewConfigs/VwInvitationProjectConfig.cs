@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwInvitationProjectConfig : IEntityTypeConfiguration<VwInvitationProject>
+public class VwInvitationProjectConfig : IEntityTypeConfiguration<InvitationProjectDTO>
 {
-    public void Configure(EntityTypeBuilder<VwInvitationProject> entity)
+    public void Configure(EntityTypeBuilder<InvitationProjectDTO> entity)
     {
         entity.HasNoKey().ToView("VW_InvitationProject");
         entity.Property(e => e.InvitationId).HasColumnName("InvitationID");

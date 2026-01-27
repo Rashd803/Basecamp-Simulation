@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwMemberConfig : IEntityTypeConfiguration<VwMember>
+public class VwMemberConfig : IEntityTypeConfiguration<MemberDTO>
 {
-    public void Configure(EntityTypeBuilder<VwMember> entity)
+    public void Configure(EntityTypeBuilder<MemberDTO> entity)
     {
         entity.HasNoKey().ToView("VW_Member");
         entity.Property(e => e.CompanyName).HasMaxLength(150);

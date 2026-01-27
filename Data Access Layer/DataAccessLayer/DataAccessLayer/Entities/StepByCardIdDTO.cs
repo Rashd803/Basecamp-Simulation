@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwStepViewByCardId
+public partial class StepByCardIdDTO
 {
+    public int StepId { get; set; }
     public int CardId { get; set; }
 
     public string Text { get; set; } = null!;

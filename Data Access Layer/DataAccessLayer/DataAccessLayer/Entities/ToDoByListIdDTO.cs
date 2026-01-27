@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwToDoViewByListId
+public partial class ToDoByListIdDTO
 {
+    public int ToDoId { get; set; }
     public int ListId { get; set; }
 
     public bool Checked { get; set; }

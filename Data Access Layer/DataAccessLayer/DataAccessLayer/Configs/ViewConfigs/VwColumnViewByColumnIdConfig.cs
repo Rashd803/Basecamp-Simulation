@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwColumnViewByColumnIdConfig : IEntityTypeConfiguration<VwColumnViewByColumnId>
+public class VwColumnViewByColumnIdConfig : IEntityTypeConfiguration<ColumnByColumnIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwColumnViewByColumnId> entity)
+    public void Configure(EntityTypeBuilder<ColumnByColumnIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_ColumnViewByColumnID");
         entity.Property(e => e.ColumnId).ValueGeneratedOnAdd().HasColumnName("ColumnID");

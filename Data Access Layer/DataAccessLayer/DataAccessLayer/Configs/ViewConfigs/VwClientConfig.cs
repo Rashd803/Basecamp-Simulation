@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwClientConfig : IEntityTypeConfiguration<VwClient>
+public class VwClientConfig : IEntityTypeConfiguration<ClientDTO>
 {
-    public void Configure(EntityTypeBuilder<VwClient> entity)
+    public void Configure(EntityTypeBuilder<ClientDTO> entity)
     {
         entity.HasNoKey().ToView("VW_Client");
         entity.Property(e => e.ClientId).HasColumnName("ClientID");

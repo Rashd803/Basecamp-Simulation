@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwDocumentViewByProjectIdConfig : IEntityTypeConfiguration<VwDocumentViewByProjectId>
+public class VwDocumentViewByProjectIdConfig : IEntityTypeConfiguration<DocumentByProjectIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwDocumentViewByProjectId> entity)
+    public void Configure(EntityTypeBuilder<DocumentByProjectIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_DocumentViewByProjectID");
         entity.Property(e => e.DocName).HasMaxLength(100);

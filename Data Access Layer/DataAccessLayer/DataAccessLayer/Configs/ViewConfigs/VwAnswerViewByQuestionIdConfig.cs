@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwAnswerViewByQuestionIdConfig : IEntityTypeConfiguration<VwAnswerViewByQuestionId>
+public class VwAnswerViewByQuestionIdConfig : IEntityTypeConfiguration<AnswerByQuestionIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwAnswerViewByQuestionId> entity)
+    public void Configure(EntityTypeBuilder<AnswerByQuestionIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_AnswerViewByQuestionID");
         entity.Property(e => e.Name).HasMaxLength(100);

@@ -3,19 +3,14 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwToDoViewByToDoId
+public partial class AnswerByQuestionIdDTO
 {
-    public int ToDoId { get; set; }
+    public int AnswerId { get; set; }
+    public int QuestionId { get; set; }
 
-    public string Text { get; set; } = null!;
+    public string? Text { get; set; }
 
-    public bool Checked { get; set; }
-
-    public bool IsPrivate { get; set; }
-    
     public int NoteID { get; set; }
-
-    public string? NoteText { get; set; }
 
     public string? Urllink { get; set; }
 

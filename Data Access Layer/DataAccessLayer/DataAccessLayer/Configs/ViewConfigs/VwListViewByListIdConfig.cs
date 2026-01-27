@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwListViewByListIdConfig : IEntityTypeConfiguration<VwListViewByListId>
+public class VwListViewByListIdConfig : IEntityTypeConfiguration<ListByListIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwListViewByListId> entity)
+    public void Configure(EntityTypeBuilder<ListByListIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_ListViewByListID");
         entity.Property(e => e.ListId).HasColumnName("ListID");

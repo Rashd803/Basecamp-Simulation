@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwCardViewByCardIdConfig : IEntityTypeConfiguration<VwCardViewByCardId>
+public class VwCardViewByCardIdConfig : IEntityTypeConfiguration<CardByCardIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwCardViewByCardId> entity)
+    public void Configure(EntityTypeBuilder<CardByCardIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_CardViewByCardID");
         entity.Property(e => e.CardId).HasColumnName("CardID");

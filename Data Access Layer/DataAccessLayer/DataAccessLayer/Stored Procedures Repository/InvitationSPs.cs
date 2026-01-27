@@ -13,13 +13,19 @@ namespace DataAccessLayer.Stored_Procedures_Repository
         private readonly AppDbContext _context;
         public InvitationSPs(AppDbContext context) { _context = context; }
 
-        public async Task AddInvitationAsync(int senderMemberId, string theInvitedPersonName, bool memberOrClient, string emailAddress, string? jobTitle, string? companyName, string password, string? note, int projectId)
+        /// <summary>
+        /// Sends an invitation to a new user to join a project.
+        /// </summary>
+        public async Task AddInvitationAsync(int senderMemberId, int projectId, string theInvitedPersonName, bool memberOrClient, string emailAddress, string password, string? jobTitle = null, string? companyName = null, string? note = null)
         {
             await _context.Database.ExecuteSqlRawAsync(
                 "EXEC SP_AddInvitation @SenderMemberID = {0}, @TheInvitedPersonName = {1}, @MemberOrClient = {2}, @EmailAddress = {3}, @JobTitle = {4}, @CompanyName = {5}, @Password = {6}, @Note = {7}, @ProjectID = {8}",
                 senderMemberId, theInvitedPersonName, memberOrClient, emailAddress, jobTitle, companyName, password, note, projectId);
         }
 
+        /// <summary>
+        /// Retrieves all invitations for a given project ID.
+        /// </summary>
         public async Task<List<T>> GetInvitationsByProjectIdAsync<T>(int projectId) where T : class
         {
             return await _context.Set<T>()
@@ -30,6 +36,9 @@ namespace DataAccessLayer.Stored_Procedures_Repository
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Retrieves an invitation by its ID.
+        /// </summary>
         public async Task<T?> GetInvitationByInvitationIdAsync<T>(int invitationId) where T : class
         {
             var results = await _context.Set<T>().FromSqlRaw(
@@ -41,13 +50,19 @@ namespace DataAccessLayer.Stored_Procedures_Repository
             return results.FirstOrDefault();
         }
 
-        public async Task UpdateInvitationAsync(int invitationId, string? jobTitle, string? companyName)
+        /// <summary>
+        /// Updates an invitation.
+        /// </summary>
+        public async Task UpdateInvitationAsync(int invitationId, string? jobTitle = null, string? companyName = null)
         {
             await _context.Database.ExecuteSqlRawAsync(
                 "EXEC SP_UpdateInvitation @InvitationID = {0}, @JobTitle = {1}, @CompanyName = {2}",
                 invitationId, jobTitle, companyName);
         }
 
+        /// <summary>
+        /// Deletes an invitation.
+        /// </summary>
         public async Task DeleteInvitationAsync(int invitationId, int projectId)
         {
             await _context.Database.ExecuteSqlRawAsync(
@@ -55,6 +70,9 @@ namespace DataAccessLayer.Stored_Procedures_Repository
                 invitationId, projectId);
         }
 
+        /// <summary>
+        /// Updates the status of an invitation.
+        /// </summary>
         public async Task AnswerInvitationAsync(int invitationId, int newStatusId)
         {
             await _context.Database.ExecuteSqlRawAsync(

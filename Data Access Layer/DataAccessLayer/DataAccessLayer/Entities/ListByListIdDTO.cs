@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwListViewByListId
+public partial class ListByListIdDTO
 {
     public int ListId { get; set; }
 

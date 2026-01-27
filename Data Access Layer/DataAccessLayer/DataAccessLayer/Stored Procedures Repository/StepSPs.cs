@@ -8,6 +8,9 @@ public class StepSPs
 
  
 
+    /// <summary>
+    /// Adds a new step to a card.
+    /// </summary>
     public async Task AddStepToCardAsync(int memberId, int cardId, int projectId, string text)
     {
         await _context.Database.ExecuteSqlRawAsync(
@@ -15,13 +18,19 @@ public class StepSPs
             memberId, cardId, projectId, text);
     }
 
-    public async Task UpdateStepAsync(int stepId, string text, bool? isChecked)
+    /// <summary>
+    /// Updates an existing step.
+    /// </summary>
+    public async Task UpdateStepAsync(int stepId, string text, bool isChecked)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_UpdateStep @StepID = {0}, @Text = {1}, @IsChecked = {2}",
             stepId, text, isChecked);
     }
 
+    /// <summary>
+    /// Deletes a step.
+    /// </summary>
     public async Task DeleteStepAsync(int stepId)
     {
         await _context.Database.ExecuteSqlRawAsync(
@@ -29,7 +38,9 @@ public class StepSPs
     }
 
 
-
+    /// <summary>
+    /// Retrieves all steps for a given card ID.
+    /// </summary>
     public async Task<List<T>> GetStepByCardIdAsync<T>(int cardId) where T : class
     {
         return await _context.Set<T>()

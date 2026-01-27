@@ -3,15 +3,19 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwQuestionViewByProjectId
+public partial class EventByProjectIdDTO
 {
     public int ProjectId { get; set; }
 
-    public string Text { get; set; } = null!;
+    public int ItemId { get; set; }
+
+    public string Title { get; set; } = null!;
 
     public DateTime FromDate { get; set; }
 
     public DateTime ToDate { get; set; }
+
+    public DateTime PublishedAt { get; set; }
 
     public bool IsPrivate { get; set; }
 }

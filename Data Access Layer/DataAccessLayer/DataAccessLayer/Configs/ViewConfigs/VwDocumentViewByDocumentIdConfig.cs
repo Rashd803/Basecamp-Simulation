@@ -2,13 +2,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwDocumentViewByDocumentIdConfig : IEntityTypeConfiguration<VwDocumentViewByDocumentId>
+public class VwDocumentViewByDocumentIdConfig : IEntityTypeConfiguration<DocumentByDocumentIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwDocumentViewByDocumentId> entity)
+    public void Configure(EntityTypeBuilder<DocumentByDocumentIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_DocumentViewByDocumentID");
         entity.Property(e => e.DocName).HasMaxLength(100);
-        entity.Property(e => e.DocumentId).HasColumnName("DocumentID");
+        entity.Property(e => e.DocId).HasColumnName("DocumentID");
         entity.Property(e => e.FilePath).HasMaxLength(4000);
         entity.Property(e => e.Name).HasMaxLength(100);
         entity.Property(e => e.PublishedAt).HasColumnType("datetime");

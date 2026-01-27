@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwDocumentViewByProjectId
+public partial class DocumentByProjectIdDTO
 {
+    public int DocId { get; set; }
     public int ProjectId { get; set; }
 
     public string FilePath { get; set; } = null!;

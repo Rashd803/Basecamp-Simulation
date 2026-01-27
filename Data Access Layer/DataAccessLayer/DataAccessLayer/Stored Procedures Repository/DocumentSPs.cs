@@ -9,6 +9,9 @@ public class DocumentSPs
     private readonly AppDbContext _context;
     public DocumentSPs(AppDbContext context) { _context = context; }
 
+    /// <summary>
+    /// Adds a new document to a project.
+    /// </summary>
     public async Task AddDocumentAsync(string? name, string filePath, int projectId, int memberId, string? noteText, string? noteUrlLink, string? attachmentFilePath, string? attachmentFileCaption, bool isPrivate)
     {
         await _context.Database.ExecuteSqlRawAsync(
@@ -16,6 +19,9 @@ public class DocumentSPs
             name, filePath, projectId, memberId, noteText, noteUrlLink, attachmentFilePath, attachmentFileCaption, isPrivate);
     }
 
+    /// <summary>
+    /// Updates an existing document.
+    /// </summary>
     public async Task UpdateDocumentAsync(int documentId, string? name, string? filePath, string? noteText, string? noteUrlLink, string? attachmentFilePath, string? attachmentFileCaption, bool? isPrivate)
     {
         await _context.Database.ExecuteSqlRawAsync(
@@ -23,12 +29,18 @@ public class DocumentSPs
             documentId, name, filePath, noteText, noteUrlLink, attachmentFilePath, attachmentFileCaption, isPrivate);
     }
 
+    /// <summary>
+    /// Deletes a document.
+    /// </summary>
     public async Task DeleteDocumentAsync(int documentId)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_DeleteDocument @DocumentID = {0}", documentId);
     }
 
+    /// <summary>
+    /// Retrieves a document by its ID.
+    /// </summary>
     public async Task<T?> GetDocumentByDocumentIdAsync<T>(int documentId) where T : class
     {
         var results = await _context.Set<T>()
@@ -40,6 +52,9 @@ public class DocumentSPs
         return results.FirstOrDefault();
     }
 
+    /// <summary>
+    /// Retrieves all documents for a given project ID.
+    /// </summary>
     public async Task<List<T>> GetDocumentByProjectIdAsync<T>(int projectId, bool memberOrClient) where T : class
     {
         return await _context.Set<T>()

@@ -4,7 +4,7 @@ using DataAccessLayer.Entities;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwCommentViewByElementId
+public partial class CommentByElementIdDTO
 {
     public int CommentId { get; set; }
     public int? MessageId { get; set; }

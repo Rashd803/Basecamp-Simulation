@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwToDoViewByToDoIdConfig : IEntityTypeConfiguration<VwToDoViewByToDoId>
+public class VwToDoViewByToDoIdConfig : IEntityTypeConfiguration<ToDoByToDoIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwToDoViewByToDoId> entity)
+    public void Configure(EntityTypeBuilder<ToDoByToDoIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_ToDoViewByToDoID");
         entity.Property(e => e.Name).HasMaxLength(100);

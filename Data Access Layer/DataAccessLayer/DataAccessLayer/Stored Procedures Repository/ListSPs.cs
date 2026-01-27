@@ -9,26 +9,38 @@ public class ListSPs
     private readonly AppDbContext _context;
     public ListSPs(AppDbContext context) { _context = context; }
 
-    public async Task AddListAsync(int memberId, int projectId, string title, string? noteText, string? urlLink, string? filePath, string? caption, bool isPrivate)
+    /// <summary>
+    /// Adds a new list to a project.
+    /// </summary>
+    public async Task AddListAsync(int memberId, int projectId, string title, bool isPrivate, string? noteText = null, string? urlLink = null, string? filePath = null, string? caption = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_AddList @MemberID = {0}, @ProjectID = {1}, @Title = {2}, @NoteText = {3}, @URLLink = {4}, @FilePath = {5}, @Caption = {6}, @IsPrivate = {7}",
             memberId, projectId, title, noteText, urlLink, filePath, caption, isPrivate);
     }
 
-    public async Task UpdateListAsync(int listId, string title, string? noteText, string? urlLink, string? filePath, string? caption, bool isPrivate)
+    /// <summary>
+    /// Updates an existing list.
+    /// </summary>
+    public async Task UpdateListAsync(int listId, string title, bool isPrivate, string? noteText = null, string? urlLink = null, string? filePath = null, string? caption = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_UpdateList @ListID = {0}, @Title = {1}, @NoteText = {2}, @URLLink = {3}, @FilePath = {4}, @Caption = {5}, @IsPrivate = {6}",
             listId, title, noteText, urlLink, filePath, caption, isPrivate);
     }
 
+    /// <summary>
+    /// Deletes a list.
+    /// </summary>
     public async Task DeleteListAsync(int listId)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_DeleteList @ListID = {0}", listId);
     }
 
+    /// <summary>
+    /// Retrieves a list by its ID.
+    /// </summary>
     public async Task<T?> GetListByListIdAsync<T>(int listId) where T : class
     {
         var results = await _context.Set<T>()
@@ -39,6 +51,9 @@ public class ListSPs
         return results.FirstOrDefault();
     }
 
+    /// <summary>
+    /// Retrieves all lists for a given project ID.
+    /// </summary>
     public async Task<List<T>> GetListByProjectIdAsync<T>(int projectId, bool memberOrClient) where T : class
     {
         return await _context.Set<T>()

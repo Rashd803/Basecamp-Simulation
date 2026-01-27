@@ -13,6 +13,9 @@ namespace DataAccessLayer.Stored_Procedures_Repository
         private readonly AppDbContext _context;
         public ActivitySPs(AppDbContext context) { _context = context; }
 
+        /// <summary>
+        /// Retrieves activities by project ID.
+        /// </summary>
         public async Task<List<T>> GetActivityProjectIdAsync<T>(int projectId) where T : class
         {
             return await _context.Set<T>()

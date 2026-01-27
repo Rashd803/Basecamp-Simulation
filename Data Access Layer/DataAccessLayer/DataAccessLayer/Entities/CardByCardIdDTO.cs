@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwCardViewByCardId
+public partial class CardByCardIdDTO
 {
     public int CardId { get; set; }
 

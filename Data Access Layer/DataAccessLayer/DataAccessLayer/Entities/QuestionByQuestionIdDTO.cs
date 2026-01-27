@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwQuestionViewByQuestionId
+public partial class QuestionByQuestionIdDTO
 {
     public int QuestionId { get; set; }
 

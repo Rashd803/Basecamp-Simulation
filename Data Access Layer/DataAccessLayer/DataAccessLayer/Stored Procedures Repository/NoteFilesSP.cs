@@ -13,6 +13,9 @@ namespace DataAccessLayer.Stored_Procedures_Repository
         private readonly AppDbContext _context;
         public NoteFilesSP(AppDbContext context) { _context = context; }
 
+        /// <summary>
+        /// Retrieves all files associated with a specific note ID.
+        /// </summary>
         public async Task<List<T>> GetFilesByNoteIdAsync<T>(int NoteID) where T : class
         {
             return await _context.Set<T>()

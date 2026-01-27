@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwEventViewByEventIdConfig : IEntityTypeConfiguration<VwEventViewByEventId>
+public class VwEventViewByEventIdConfig : IEntityTypeConfiguration<EventByEventIdDTO>
 {
-    public void Configure(EntityTypeBuilder<VwEventViewByEventId> entity)
+    public void Configure(EntityTypeBuilder<EventByEventIdDTO> entity)
     {
         entity.HasNoKey().ToView("VW_EventViewByEventID");
         entity.Property(e => e.EventId).HasColumnName("EventID");

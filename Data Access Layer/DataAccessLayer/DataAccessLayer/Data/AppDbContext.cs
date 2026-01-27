@@ -17,122 +17,71 @@ public partial class AppDbContext : DbContext
     {
     }
 
-    public virtual DbSet<Activity> Activities { get; set; }
-
-    public virtual DbSet<Answer> Answers { get; set; }
-
-    public virtual DbSet<Assignment> Assignments { get; set; }
-
-    public virtual DbSet<Card> Cards { get; set; }
-
-    public virtual DbSet<Chat> Chats { get; set; }
-
-    public virtual DbSet<Client> Clients { get; set; }
-
-    public virtual DbSet<Column> Columns { get; set; }
-
-    public virtual DbSet<CommentSubscription> CommentSubscriptions { get; set; }
-
-    public virtual DbSet<Document> Documents { get; set; }
-
-    public virtual DbSet<Event> Events { get; set; }
-
-    public virtual DbSet<NoteFile> NotesFiles { get; set; }
-
-    public virtual DbSet<Invitation> Invitations { get; set; }
-
-    public virtual DbSet<InvitationStatus> InvitationStatuses { get; set; }
-
-    public virtual DbSet<List> Lists { get; set; }
-
-    public virtual DbSet<Member> Members { get; set; }
-
-    public virtual DbSet<MessageBoard> MessageBoards { get; set; }
-
-    public virtual DbSet<Note> Notes { get; set; }
-
-    public virtual DbSet<Project> Projects { get; set; }
-
-    public virtual DbSet<ProjectComment> ProjectComments { get; set; }
-
-    public virtual DbSet<PublishingInformation> PublishingInformations { get; set; }
-
-    public virtual DbSet<Question> Questions { get; set; }
-
-    public virtual DbSet<Schedule> Schedules { get; set; }
-
-    public virtual DbSet<ScheduleType> ScheduleTypes { get; set; }
-
-    public virtual DbSet<Step> Steps { get; set; }
-
-    public virtual DbSet<ToDo> ToDos { get; set; }
-
-    public virtual DbSet<User> Users { get; set; }
-
-    public virtual DbSet<VwActivityByProjectId> VwActivityByProjectIds { get; set; }
+ 
+    public virtual DbSet<ActivityByProjectIdDTO> VwActivityByProjectIds { get; set; }
 
 
-    public virtual DbSet<VwAnswerViewByQuestionId> VwAnswerViewByQuestionIds { get; set; }
+    public virtual DbSet<AnswerByQuestionIdDTO> VwAnswerViewByQuestionIds { get; set; }
 
-    public virtual DbSet<VwAssignmentByElementId> VwAssignmentByElementIds { get; set; }
+    public virtual DbSet<AssignmentByElementIdDTO> VwAssignmentByElementIds { get; set; }
 
 
-    public virtual DbSet<VwCardViewByCardId> VwCardViewByCardIds { get; set; }
+    public virtual DbSet<CardByCardIdDTO> VwCardViewByCardIds { get; set; }
 
-    public virtual DbSet<VwCardViewByColumnId> VwCardViewByColumnIds { get; set; }
+    public virtual DbSet<CardByColumnIdDTO> VwCardViewByColumnIds { get; set; }
 
-    public virtual DbSet<VwChatViewByProjectId> VwChatViewByProjectIds { get; set; }
+    public virtual DbSet<ChatByProjectIdDTO> VwChatViewByProjectIds { get; set; }
 
-    public virtual DbSet<VwClient> VwClients { get; set; }
+    public virtual DbSet<ClientDTO> VwClients { get; set; }
 
-    public virtual DbSet<VwClientProject> VwClientProjects { get; set; }
+    public virtual DbSet<ClientProjectDTO> VwClientProjects { get; set; }
 
-    public virtual DbSet<VwColumnViewByColumnId> VwColumnViewByColumnIds { get; set; }
+    public virtual DbSet<ColumnByColumnIdDTO> VwColumnViewByColumnIds { get; set; }
 
-    public virtual DbSet<VwColumnViewByProjectId> VwColumnViewByProjectIds { get; set; }
+    public virtual DbSet<ColumnByProjectIdDTO> VwColumnViewByProjectIds { get; set; }
 
-    public virtual DbSet<VwCommentViewByElementId> VwCommentViewByElementIds { get; set; }
+    public virtual DbSet<CommentByElementIdDTO> VwCommentViewByElementIds { get; set; }
 
-    public virtual DbSet<VwDocumentViewByDocumentId> VwDocumentViewByDocumentIds { get; set; }
+    public virtual DbSet<DocumentByDocumentIdDTO> VwDocumentViewByDocumentIds { get; set; }
 
-    public virtual DbSet<VwDocumentViewByProjectId> VwDocumentViewByProjectIds { get; set; }
+    public virtual DbSet<DocumentByProjectIdDTO> VwDocumentViewByProjectIds { get; set; }
 
   
-    public virtual DbSet<VwEventViewByEventId> VwEventViewByEventIds { get; set; }
+    public virtual DbSet<EventByEventIdDTO> VwEventViewByEventIds { get; set; }
 
-    public virtual DbSet<VwEventViewByProjectId> VwEventViewByProjectIds { get; set; }
+    public virtual DbSet<EventByProjectIdDTO> VwEventViewByProjectIds { get; set; }
 
-    public virtual DbSet<VwFileByNoteId> VwFileByNoteIds { get; set; }
+    public virtual DbSet<FileByNoteIdDTO> VwFileByNoteIds { get; set; }
 
 
-    public virtual DbSet<VwInvitation> VwInvitations { get; set; }
+    public virtual DbSet<InvitationDTO> VwInvitations { get; set; }
 
-    public virtual DbSet<VwInvitationProject> VwInvitationProjects { get; set; }
+    public virtual DbSet<InvitationProjectDTO> VwInvitationProjects { get; set; }
 
-    public virtual DbSet<VwListViewByListId> VwListViewByListIds { get; set; }
+    public virtual DbSet<ListByListIdDTO> VwListViewByListIds { get; set; }
 
-    public virtual DbSet<VwListViewByProjectId> VwListViewByProjectIds { get; set; }
+    public virtual DbSet<ListByProjectIdDTO> VwListViewByProjectIds { get; set; }
 
-    public virtual DbSet<VwMember> VwMembers { get; set; }
+    public virtual DbSet<MemberDTO> VwMembers { get; set; }
 
-    public virtual DbSet<VwMemberProject> VwMemberProjects { get; set; }
-
-   
+    public virtual DbSet<MemberProjectDTO> VwMemberProjects { get; set; }
 
    
-    public virtual DbSet<VwMessageBoardByMessageId> VwMessageBoardByMessageIds { get; set; }
 
-    public virtual DbSet<VwMessageBoardByProjectId> VwMessageBoardByProjectIds { get; set; }
+   
+    public virtual DbSet<MessageBoardByMessageIdDTO> VwMessageBoardByMessageIds { get; set; }
 
-    public virtual DbSet<VwQuestionViewByProjectId> VwQuestionViewByProjectIds { get; set; }
+    public virtual DbSet<MessageBoardByProjectIdDTO> VwMessageBoardByProjectIds { get; set; }
 
-    public virtual DbSet<VwQuestionViewByQuestionId> VwQuestionViewByQuestionIds { get; set; }
+    public virtual DbSet<QuestionByProjectIdDTO> VwQuestionViewByProjectIds { get; set; }
 
-    public virtual DbSet<VwStepViewByCardId> VwStepViewByCardIds { get; set; }
+    public virtual DbSet<QuestionByQuestionIdDTO> VwQuestionViewByQuestionIds { get; set; }
 
-    public virtual DbSet<VwToDoViewByListId> VwToDoViewByListIds { get; set; }
+    public virtual DbSet<StepByCardIdDTO> VwStepViewByCardIds { get; set; }
 
-    public virtual DbSet<VwToDoViewByToDoId> VwToDoViewByToDoIds { get; set; }
+    public virtual DbSet<ToDoByListIdDTO> VwToDoViewByListIds { get; set; }
+
+    public virtual DbSet<ToDoByToDoIdDTO> VwToDoViewByToDoIds { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

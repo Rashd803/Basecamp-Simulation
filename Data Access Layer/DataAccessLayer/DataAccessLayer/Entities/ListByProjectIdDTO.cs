@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities;
 
-public partial class VwListViewByProjectId
+public partial class ListByProjectIdDTO
 {
     public int ProjectId { get; set; }
 
