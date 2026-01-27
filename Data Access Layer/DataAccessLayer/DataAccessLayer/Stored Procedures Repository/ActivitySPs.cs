@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Stored_Procedures_Repository
 {
-    public class NoteFilesSP
+    public class ActivitySPs
     {
         private readonly AppDbContext _context;
-        public NoteFilesSP(AppDbContext context) { _context = context; }
+        public ActivitySPs(AppDbContext context) { _context = context; }
 
-        public async Task<List<T>> GetFilesByNoteIdAsync<T>(int NoteID) where T : class
+        public async Task<List<T>> GetActivityProjectIdAsync<T>(int projectId) where T : class
         {
             return await _context.Set<T>()
-                .FromSqlRaw("SP_GetFilesByNoteID @NoteID = {0}", NoteID)
+                .FromSqlRaw("EXEC SP_GetActivityByProjectID @ProjectID = {0}", projectId)
                 .AsNoTracking()
                 .ToListAsync();
         }

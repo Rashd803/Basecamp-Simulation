@@ -29,15 +29,22 @@ public class DocumentSPs
             "EXEC SP_DeleteDocument @DocumentID = {0}", documentId);
     }
 
-    public async Task<List<T>> GetDocumentByDocumentIdAsync<T>(int documentId) where T : class
+    public async Task<T?> GetDocumentByDocumentIdAsync<T>(int documentId) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetDocumentByDocumentID @DocumentID = {0}", documentId).ToListAsync();
+        var results = await _context.Set<T>()
+            .FromSqlRaw(
+            "EXEC SP_GetDocumentByDocumentID @DocumentID = {0}", documentId)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return results.FirstOrDefault();
     }
 
     public async Task<List<T>> GetDocumentByProjectIdAsync<T>(int projectId, bool memberOrClient) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetDocumentByProjectID @ProjectID = {0}, @MemberOrClient = {1}", projectId, memberOrClient).ToListAsync();
+        return await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetDocumentByProjectID @ProjectID = {0}, @MemberOrClient = {1}", projectId, memberOrClient)
+            .AsNoTracking()
+            .ToListAsync();
     }
 }

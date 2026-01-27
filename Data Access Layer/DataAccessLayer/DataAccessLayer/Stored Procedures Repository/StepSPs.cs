@@ -32,7 +32,9 @@ public class StepSPs
 
     public async Task<List<T>> GetStepByCardIdAsync<T>(int cardId) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetStepByCardID @CardID = {0}", cardId).ToListAsync();
+        return await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetStepByCardID @CardID = {0}", cardId)
+            .AsNoTracking()
+            .ToListAsync();
     }
 }

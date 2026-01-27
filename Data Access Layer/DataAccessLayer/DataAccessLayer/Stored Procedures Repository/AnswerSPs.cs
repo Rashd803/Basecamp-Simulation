@@ -31,7 +31,8 @@ public class AnswerSPs
 
     public async Task<List<T>> GetAnswerByQuestionIdAsync<T>(int questionId) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetAnswerByQuestionID @QuestionID = {0}", questionId).ToListAsync();
+        return await _context.Set<T>().FromSqlRaw("EXEC SP_GetAnswerByQuestionID @QuestionID = {0}", questionId)
+            .AsNoTracking()
+            .ToListAsync();
     }
 }

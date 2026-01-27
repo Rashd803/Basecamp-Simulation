@@ -26,6 +26,8 @@ public class AssignmentSPs
     {
         return await _context.Set<T>().FromSqlRaw(
             "EXEC SP_GetAssignmentByElementID @EventID = {0}, @To_DoID = {1}, @StepID = {2}, @QuestionID = {3}, @CardID = {4}",
-            eventId, toDoId, stepId, questionId, cardId).ToListAsync();
+            eventId, toDoId, stepId, questionId, cardId)
+            .AsNoTracking()
+            .ToListAsync();
     }
 }

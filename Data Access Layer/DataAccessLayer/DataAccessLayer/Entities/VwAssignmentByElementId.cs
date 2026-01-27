@@ -14,6 +14,7 @@ public partial class VwAssignmentByElementId
     public int? CardId { get; set; }
 
     public int? StepId { get; set; }
+    public int? CommentId { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string MemberName { get; set; }
 }

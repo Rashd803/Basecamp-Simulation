@@ -6,6 +6,7 @@ namespace DataAccessLayer.Entities;
 
 public partial class VwCommentViewByElementId
 {
+    public int CommentId { get; set; }
     public int? MessageId { get; set; }
 
     public int? DocumentId { get; set; }

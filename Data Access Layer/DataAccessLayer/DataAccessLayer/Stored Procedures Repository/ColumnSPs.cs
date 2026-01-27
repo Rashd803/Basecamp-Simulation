@@ -29,15 +29,21 @@ public class ColumnSPs
             "EXEC SP_DeleteColumn @ColumnID = {0}", columnId);
     }
 
-    public async Task GetColumnByProjectIDAsync(int projectid, bool memberorclient)
+    public async Task <List<T>> GetColumnByProjectIDAsync<T>(int projectid, bool memberorclient) where T : class
     {
-        await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_GetColumnByProjectID @ProjectID = {0}, @MemberOrClient = {1}", projectid, memberorclient);
+        return await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetColumnByProjectID @ProjectID = {0}, @MemberOrClient = {1}", projectid, memberorclient)
+            .AsNoTracking()
+            .ToListAsync();
     }
 
-    public async Task GetColumnByColumnIDAsync(int columnId)
+    public async Task<T?> GetColumnByColumnIDAsync<T>(int columnId) where T : class
     {
-        await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_GetColumnByColumnID @ColumnID = {0}", columnId);
+       var results = await _context.Set<T>()
+        .FromSqlRaw("EXEC SP_GetColumnByColumnID @ColumnID = {0}", columnId)
+        .AsNoTracking()
+        .ToListAsync();
+
+        return results.FirstOrDefault();
     }
 }

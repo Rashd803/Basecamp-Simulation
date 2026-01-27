@@ -29,15 +29,21 @@ public class CardSPs
             "EXEC SP_DeleteCard @CardID = {0}", cardId);
     }
 
-    public async Task<List<T>> GetCardByCardIdAsync<T>(int cardId) where T : class
+    public async Task<T?> GetCardByCardIdAsync<T>(int cardId) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetCardByCardID @CardID = {0}", cardId).ToListAsync();
+        var results = await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetCardByCardID @CardID = {0}", cardId)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return results.FirstOrDefault();
     }
 
     public async Task<List<T>> GetCardsByColumnIdAsync<T>(int columnId, bool memberOrClient) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetCardsByColumnID @ColumnID = {0}, @MemberOrClient = {1}", columnId, memberOrClient).ToListAsync();
+        return await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetCardsByColumnID @ColumnID = {0}, @MemberOrClient = {1}", columnId, memberOrClient)
+            .AsNoTracking()
+            .ToListAsync();
     }
 }

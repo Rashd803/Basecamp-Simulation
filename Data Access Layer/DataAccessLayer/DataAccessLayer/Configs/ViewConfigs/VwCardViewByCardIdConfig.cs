@@ -11,7 +11,7 @@ public class VwCardViewByCardIdConfig : IEntityTypeConfiguration<VwCardViewByCar
         entity.Property(e => e.CardTitle).HasMaxLength(50);
         entity.Property(e => e.ColumnTitle).HasMaxLength(50);
         entity.Property(e => e.FromDate).HasColumnType("datetime");
-        entity.Property(e => e.Name).HasMaxLength(100);
+        entity.Property(e => e.Username).HasMaxLength(100);
         entity.Property(e => e.PublishedAt).HasColumnType("datetime");
         entity.Property(e => e.ToDate).HasColumnType("datetime");
     }

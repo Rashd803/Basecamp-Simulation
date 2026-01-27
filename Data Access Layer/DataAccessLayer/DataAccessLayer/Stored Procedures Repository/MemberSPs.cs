@@ -42,12 +42,17 @@ namespace DataAccessLayer.Stored_Procedures_Repository
         }
 
         /// <summary>
-        /// Retrieves a member's details by their ID.
+        /// Retrieves a member's details by the ID.
         /// </summary>
-        public async Task<List<T>> GetMemberByMemberIdAsync<T>(int memberId) where T : class
+        public async Task<T?> GetMemberByMemberIdAsync<T>(int memberId) where T : class
         {
-            return await _context.Set<T>().FromSqlRaw(
-                "EXEC SP_GetMemberByMemberID @MemberID = {0}", memberId).ToListAsync();
+            var results = await _context.Set<T>()
+                .FromSqlRaw(
+                "EXEC SP_GetMemberByMemberID @MemberID = {0}", memberId)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return results.FirstOrDefault();
         }
 
         /// <summary>
@@ -55,8 +60,11 @@ namespace DataAccessLayer.Stored_Procedures_Repository
         /// </summary>
         public async Task<List<T>> GetTeamMembersByProjectIdAsync<T>(int projectId) where T : class
         {
-            return await _context.Set<T>().FromSqlRaw(
-                "EXEC SP_GetTeamMembersByProjectID @ProjectID = {0}", projectId).ToListAsync();
+            return await _context.Set<T>()
+                .FromSqlRaw(
+                "EXEC SP_GetTeamMembersByProjectID @ProjectID = {0}", projectId)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

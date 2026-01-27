@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using DataAccessLayer.Entities;
+﻿using DataAccessLayer.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
 
 namespace DataAccessLayer.Data;
 
@@ -70,13 +71,11 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<VwActivityByProjectId> VwActivityByProjectIds { get; set; }
 
-    public virtual DbSet<VwActivityViewByProjectId> VwActivityViewByProjectIds { get; set; }
 
     public virtual DbSet<VwAnswerViewByQuestionId> VwAnswerViewByQuestionIds { get; set; }
 
     public virtual DbSet<VwAssignmentByElementId> VwAssignmentByElementIds { get; set; }
 
-    public virtual DbSet<VwAssignmentViewByElementId> VwAssignmentViewByElementIds { get; set; }
 
     public virtual DbSet<VwCardViewByCardId> VwCardViewByCardIds { get; set; }
 
@@ -98,15 +97,13 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<VwDocumentViewByProjectId> VwDocumentViewByProjectIds { get; set; }
 
-    public virtual DbSet<VwElementCommentView> VwElementCommentViews { get; set; }
-
+  
     public virtual DbSet<VwEventViewByEventId> VwEventViewByEventIds { get; set; }
 
     public virtual DbSet<VwEventViewByProjectId> VwEventViewByProjectIds { get; set; }
 
     public virtual DbSet<VwFileByNoteId> VwFileByNoteIds { get; set; }
 
-    public virtual DbSet<VwFileViewByNoteId> VwFileViewByNoteIds { get; set; }
 
     public virtual DbSet<VwInvitation> VwInvitations { get; set; }
 
@@ -120,8 +117,9 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<VwMemberProject> VwMemberProjects { get; set; }
 
-    public virtual DbSet<VwMessageBoard> VwMessageBoards { get; set; }
+   
 
+   
     public virtual DbSet<VwMessageBoardByMessageId> VwMessageBoardByMessageIds { get; set; }
 
     public virtual DbSet<VwMessageBoardByProjectId> VwMessageBoardByProjectIds { get; set; }
@@ -137,9 +135,15 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<VwToDoViewByToDoId> VwToDoViewByToDoIds { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source = .; initial catalog = Basecamp; Integrated Security = SSPI; TrustServerCertificate = True");
+    {
+        var configuration = new ConfigurationBuilder()
+                .AddJsonFile("AppSettings.json")
+                .Build();
 
+        var connectionString = configuration.GetSection("ConnectionString").Value;
+
+        optionsBuilder.UseSqlServer(connectionString);
+    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);

@@ -34,17 +34,23 @@ public class MessageBoardSPs
             messageBoardId);
     }
 
-    public async Task<List<T>> GetMessageBoardByMessageIdAsync<T>(int messageId) where T : class
+    public async Task<T?> GetMessageBoardByMessageIdAsync<T>(int messageId) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetMessageBoardByMessageID @MessageID = {0}",
-            messageId).ToListAsync();
+        var results = await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetMessageBoardByMessageID @MessageID = {0}",
+            messageId)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return results.FirstOrDefault();
     }
 
     public async Task<List<T>> GetMessageBoardByProjectIdAsync<T>(int projectId, bool memberOrClient) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetMessageBoardByProjectID @ProjectID = {0}, @MemberOrClient = {1}",
-            projectId, memberOrClient).ToListAsync();
+        return await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetMessageBoardByProjectID @ProjectID = {0}, @MemberOrClient = {1}",
+            projectId, memberOrClient)
+            .AsNoTracking()
+            .ToListAsync();
     }
 }

@@ -17,7 +17,7 @@ public partial class VwCardViewByColumnId
 
     public DateTime PublishedAt { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string Username { get; set; } = null!;
 
     public bool IsPrivate { get; set; }
 }

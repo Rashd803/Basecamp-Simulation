@@ -22,16 +22,23 @@ namespace DataAccessLayer.Stored_Procedures_Repository
 
         public async Task<List<T>> GetInvitationsByProjectIdAsync<T>(int projectId) where T : class
         {
-            return await _context.Set<T>().FromSqlRaw(
+            return await _context.Set<T>()
+                .FromSqlRaw(
                 "EXEC SP_GetInvitationsByProjectID @ProjectID = {0}",
-                projectId).ToListAsync();
+                projectId)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
-        public async Task<List<T>> GetInvitationByInvitationIdAsync<T>(int invitationId) where T : class
+        public async Task<T?> GetInvitationByInvitationIdAsync<T>(int invitationId) where T : class
         {
-            return await _context.Set<T>().FromSqlRaw(
+            var results = await _context.Set<T>().FromSqlRaw(
                 "EXEC SP_GetInvitationsByInvitationID @InvitationID = {0}",
-                invitationId).ToListAsync();
+                invitationId)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return results.FirstOrDefault();
         }
 
         public async Task UpdateInvitationAsync(int invitationId, string? jobTitle, string? companyName)

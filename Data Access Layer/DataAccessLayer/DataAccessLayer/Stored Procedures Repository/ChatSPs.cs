@@ -22,16 +22,19 @@ namespace DataAccessLayer.Stored_Procedures_Repository
 
         public async Task<List<T>> GetChatByProjectIdAsync<T>(int projectId, bool memberOrClient) where T : class
         {
-            return await _context.Set<T>().FromSqlRaw(
+            return await _context.Set<T>()
+                .FromSqlRaw(
                 "EXEC SP_GetChatByProjectID @ProjectID = {0}, @MemberOrClient = {1}",
-                projectId, memberOrClient).ToListAsync();
+                projectId, memberOrClient)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
-        public async Task UpdateChatAsync(int chatId, string text, int projectId, bool isPrivate)
+        public async Task UpdateChatAsync(int chatId, string text, bool isPrivate)
         {
             await _context.Database.ExecuteSqlRawAsync(
-                "EXEC SP_UpdateChat @ChatID = {0}, @Text = {1}, @ProjectID = {2}, @IsPrivate = {3}",
-                chatId, text, projectId, isPrivate);
+                "EXEC SP_UpdateChat @ChatID = {0}, @Text = {1}, @IsPrivate = {2}",
+                chatId, text, isPrivate);
         }
 
         public async Task DeleteMessageFromChatAsync(int chatId)

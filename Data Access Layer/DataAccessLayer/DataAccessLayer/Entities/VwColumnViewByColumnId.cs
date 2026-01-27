@@ -10,4 +10,5 @@ public partial class VwColumnViewByColumnId
     public string Title { get; set; } = null!;
 
     public string? Description { get; set; }
+    public int CardsNum { get; set; }
 }

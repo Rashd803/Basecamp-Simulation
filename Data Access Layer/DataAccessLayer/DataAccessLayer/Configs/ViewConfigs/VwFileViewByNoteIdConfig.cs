@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwFileViewByNoteIdConfig : IEntityTypeConfiguration<VwFileViewByNoteId>
+public class VwFileViewByNoteIdConfig : IEntityTypeConfiguration<VwFileByNoteId>
 {
-    public void Configure(EntityTypeBuilder<VwFileViewByNoteId> entity)
+    public void Configure(EntityTypeBuilder<VwFileByNoteId> entity)
     {
         entity.HasNoKey().ToView("VW_FileViewByNoteID");
         entity.Property(e => e.Caption).HasMaxLength(200);

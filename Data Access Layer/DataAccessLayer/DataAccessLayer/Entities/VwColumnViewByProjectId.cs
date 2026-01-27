@@ -13,5 +13,8 @@ public partial class VwColumnViewByProjectId
 
     public string? Description { get; set; }
 
+    public DateTime PublishedAt { get; set; }
     public bool IsPrivate { get; set; }
+    public int CardsNum { get; set; }
+
 }

@@ -11,7 +11,7 @@ public partial class VwCardViewByCardId
 
     public string CardTitle { get; set; }
 
-    public int NoteID { get; set; }
+    public int? NoteID { get; set; }
     public string? NoteText { get; set; } = null!;
     public string? URLLink  { get; set; } = null!;
     public DateTime? FromDate { get; set; }
@@ -20,5 +20,5 @@ public partial class VwCardViewByCardId
 
     public DateTime PublishedAt { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string Username { get; set; } = null!;
 }

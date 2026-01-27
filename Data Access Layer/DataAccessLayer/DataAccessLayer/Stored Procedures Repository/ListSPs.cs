@@ -29,15 +29,21 @@ public class ListSPs
             "EXEC SP_DeleteList @ListID = {0}", listId);
     }
 
-    public async Task<List<T>> GetListByListIdAsync<T>(int listId) where T : class
+    public async Task<T?> GetListByListIdAsync<T>(int listId) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetListByListID @ListID = {0}", listId).ToListAsync();
+        var results = await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetListByListID @ListID = {0}", listId)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return results.FirstOrDefault();
     }
 
     public async Task<List<T>> GetListByProjectIdAsync<T>(int projectId, bool memberOrClient) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetListByProjectID @ProjectID = {0}, @MemberOrClient = {1}", projectId, memberOrClient).ToListAsync();
+        return await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetListByProjectID @ProjectID = {0}, @MemberOrClient = {1}", projectId, memberOrClient)
+            .AsNoTracking()
+            .ToListAsync();
     }
 }

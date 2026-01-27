@@ -5,7 +5,7 @@ namespace DataAccessLayer.Entities;
 
 public partial class VwActivityByProjectId
 {
-    public int? ProjectId { get; set; }
+    public int ProjectId { get; set; }
 
     public string Text { get; set; } = null!;
 

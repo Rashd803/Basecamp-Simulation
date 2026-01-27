@@ -31,13 +31,19 @@ public class ToDoSPs
 
     public async Task<List<T>> GetToDoByListIdAsync<T>(int listId, bool isClient) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetToDoByListID @ListID = {0}, @IsClient = {1}", listId, isClient).ToListAsync();
+        return await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetToDoByListID @ListID = {0}, @IsClient = {1}", listId, isClient)
+            .AsNoTracking(
+            ).ToListAsync();
     }
 
-    public async Task<List<T>> GetToDoByToDoIdAsync<T>(int toDoId) where T : class
+    public async Task<T?> GetToDoByToDoIdAsync<T>(int toDoId) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetToDoByToDoID @To_DoID = {0}", toDoId).ToListAsync();
+        var results = await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetToDoByToDoID @To_DoID = {0}", toDoId)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return results.FirstOrDefault();
     }
 }

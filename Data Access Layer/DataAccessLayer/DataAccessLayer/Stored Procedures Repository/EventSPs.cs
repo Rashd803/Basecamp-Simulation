@@ -28,16 +28,22 @@ public class EventSPs
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_DeleteEvent @EventID = {0}", eventId);
     }
-
-    public async Task<List<T>> GetEventByEventIdAsync<T>(int eventId) where T : class
+     
+    public async Task<T?> GetEventByEventIdAsync<T>(int eventId) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetEventByEventID @EventID = {0}", eventId).ToListAsync();
+        var results = await _context.Set<T>().FromSqlRaw("EXEC SP_GetEventByEventID @EventID = {0}", eventId)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return results.FirstOrDefault();
     }
 
     public async Task<List<T>> GetEventByProjectIdAsync<T>(int projectId, bool memberOrClient) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetEventByProjectID @ProjectID = {0}, @MemberOrClient = {1}", projectId, memberOrClient).ToListAsync();
+        return await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetEventByProjectID @ProjectID = {0}, @MemberOrClient = {1}"
+            , projectId, memberOrClient)
+            .AsNoTracking()
+            .ToListAsync();
     }
 }

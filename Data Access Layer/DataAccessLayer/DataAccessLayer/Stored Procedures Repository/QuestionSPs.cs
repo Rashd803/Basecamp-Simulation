@@ -29,13 +29,19 @@ public class QuestionSPs
 
     public async Task<List<T>> GetQuestionByProjectIdAsync<T>(int projectId, bool memberorclient) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetQuestionByProjectID @ProjectID = {0}, , @MemberOrClient = {1}", projectId, memberorclient).ToListAsync();
+        return await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetQuestionByProjectID @ProjectID = {0}, @MemberOrClient = {1}", projectId, memberorclient)
+            .AsNoTracking()
+            .ToListAsync();
     }
 
-    public async Task<List<T>> GetQuestionByQuestionIdAsync<T>(int questionId) where T : class
+    public async Task<T?> GetQuestionByQuestionIdAsync<T>(int questionId) where T : class
     {
-        return await _context.Set<T>().FromSqlRaw(
-            "EXEC SP_GetQuestionByQuestionID @QuestionID = {0}", questionId).ToListAsync();
+        var results = await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetQuestionByQuestionID @QuestionID = {0}", questionId)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return results.FirstOrDefault();
     }
 }
