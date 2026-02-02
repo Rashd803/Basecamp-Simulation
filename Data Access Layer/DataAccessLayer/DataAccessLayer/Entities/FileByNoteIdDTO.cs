@@ -5,6 +5,7 @@ namespace DataAccessLayer.Entities;
 
 public partial class FileByNoteIdDTO
 {
+    public int FileId { get; set; }
     public int NoteId { get; set; }
 
     public string FilePath { get; set; } = null!;
