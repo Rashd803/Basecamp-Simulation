@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Stored_Procedures_Repository
 {
-    public class NoteFilesSP
+    public class NoteFilesSPs
     {
         private readonly AppDbContext _context;
-        public NoteFilesSP(AppDbContext context) { _context = context; }
+        public NoteFilesSPs(AppDbContext context) { _context = context; }
 
         /// <summary>
         /// Retrieves all files associated with a specific note ID.
@@ -36,10 +36,16 @@ namespace DataAccessLayer.Stored_Procedures_Repository
                  FileID, FilePath, FileCaption);
         }
 
-        public async Task DeleteFileAsync(int FileID, string FilePath, string FileCaption)
+        public async Task DeleteFileAsync(int FileID)
         {
             await _context.Database.ExecuteSqlRawAsync("EXEC SP_DeleteFileFromNote @FileID{0}",
                  FileID);
+        }
+
+        public async Task DeleteNoteAsync(int NoteID)
+        {
+            await _context.Database.ExecuteSqlRawAsync("EXEC SP_DeleteNote @NoteID{0}",
+                 NoteID);
         }
 
     }

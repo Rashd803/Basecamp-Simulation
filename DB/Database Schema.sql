@@ -1,12 +1,12 @@
 USE [master]
 GO
-/****** Object:  Database [Basecamp]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Database [Basecamp]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE DATABASE [Basecamp]
  CONTAINMENT = NONE
  ON  PRIMARY 
 ( NAME = N'Basecamp', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\Basecamp.mdf' , SIZE = 73728KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
  LOG ON 
-( NAME = N'Basecamp_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\Basecamp_log.ldf' , SIZE = 139264KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+( NAME = N'Basecamp_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\Basecamp_log.ldf' , SIZE = 204800KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
  WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
 GO
 ALTER DATABASE [Basecamp] SET COMPATIBILITY_LEVEL = 160
@@ -84,7 +84,7 @@ ALTER DATABASE [Basecamp] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_
 GO
 USE [Basecamp]
 GO
-/****** Object:  Table [dbo].[Schedules]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Schedules]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -101,7 +101,7 @@ CREATE TABLE [dbo].[Schedules](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[To_Dos]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[To_Dos]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -121,13 +121,13 @@ CREATE TABLE [dbo].[To_Dos](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [CLI_ToDo_ListID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [CLI_ToDo_ListID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE CLUSTERED INDEX [CLI_ToDo_ListID] ON [dbo].[To_Dos]
 (
 	[ListID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[PublishingInformation]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[PublishingInformation]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -143,7 +143,7 @@ CREATE TABLE [dbo].[PublishingInformation](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -165,7 +165,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Members]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Members]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -180,14 +180,21 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[VW_ToDoViewByListID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_ToDoViewByListID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_ToDoViewByListID] AS SELECT TD.ListID, TD.Checked, TD.Text, U.Name, S.FromDate, S.ToDate FROM To_Dos AS TD INNER JOIN PublishingInformation AS P ON TD.PublishingInfoID = P.ID INNER JOIN Members AS M ON P.PublisherID = M.ID INNER JOIN Users AS U ON M.UserID = U.ID LEFT JOIN Schedules AS S ON TD.ScheduleID = S.ID
+CREATE VIEW [dbo].[VW_ToDoViewByListID]
+AS
+SELECT TD.ID AS ToDoID, TD.ListID, TD.Checked, TD.Text, U.Name, S.FromDate, S.ToDate, TD.IsPrivate
+FROM     dbo.To_Dos AS TD INNER JOIN
+                  dbo.PublishingInformation AS P ON TD.PublishingInfoID = P.ID INNER JOIN
+                  dbo.Members AS M ON P.PublisherID = M.ID INNER JOIN
+                  dbo.Users AS U ON M.UserID = U.ID LEFT OUTER JOIN
+                  dbo.Schedules AS S ON TD.ScheduleID = S.ID
 GO
-/****** Object:  Table [dbo].[Documents]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Documents]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -206,13 +213,13 @@ CREATE TABLE [dbo].[Documents](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [CLI_Doc_ProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [CLI_Doc_ProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE CLUSTERED INDEX [CLI_Doc_ProjectID] ON [dbo].[Documents]
 (
 	[ProjectID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Notes]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Notes]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -229,21 +236,33 @@ CREATE TABLE [dbo].[Notes](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[VW_DocumentViewByDocumentID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_DocumentViewByDocumentID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_DocumentViewByDocumentID] AS SELECT D.ID AS DocumentID, D.FilePath, D.Name AS DocName, D.IsPrivate, N.Text, N.URLLink, P.PublishedAt, U.Name FROM Documents AS D LEFT JOIN Notes AS N ON D.NoteID = N.ID INNER JOIN PublishingInformation AS P ON D.PublishingInfoID = P.ID INNER JOIN Members AS M ON P.PublisherID = M.ID INNER JOIN Users AS U ON M.UserID = U.ID
+CREATE VIEW [dbo].[VW_DocumentViewByDocumentID]
+AS
+SELECT D.ID AS DocumentID, D.FilePath, D.Name AS DocName, D.IsPrivate, N.ID AS NoteID, N.Text, N.URLLink, P.PublishedAt, U.Name
+FROM     dbo.Documents AS D LEFT OUTER JOIN
+                  dbo.Notes AS N ON D.NoteID = N.ID INNER JOIN
+                  dbo.PublishingInformation AS P ON D.PublishingInfoID = P.ID INNER JOIN
+                  dbo.Members AS M ON P.PublisherID = M.ID INNER JOIN
+                  dbo.Users AS U ON M.UserID = U.ID
 GO
-/****** Object:  View [dbo].[VW_DocumentViewByProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_DocumentViewByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_DocumentViewByProjectID] AS SELECT D.ProjectID, D.FilePath, D.Name AS DocName, N.Text, N.URLLink, P.PublishedAt FROM Documents AS D LEFT JOIN Notes AS N ON D.NoteID = N.ID INNER JOIN PublishingInformation AS P ON D.PublishingInfoID = P.ID
+CREATE VIEW [dbo].[VW_DocumentViewByProjectID]
+AS
+SELECT D.ID AS DocID, D.ProjectID, D.FilePath, D.Name AS DocName, N.Text, N.URLLink, P.PublishedAt, D.IsPrivate
+FROM     dbo.Documents AS D LEFT OUTER JOIN
+                  dbo.Notes AS N ON D.NoteID = N.ID INNER JOIN
+                  dbo.PublishingInformation AS P ON D.PublishingInfoID = P.ID
 GO
-/****** Object:  Table [dbo].[Chats]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Chats]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -260,20 +279,26 @@ CREATE TABLE [dbo].[Chats](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Index [CLI_Chat_ProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [CLI_Chat_ProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE CLUSTERED INDEX [CLI_Chat_ProjectID] ON [dbo].[Chats]
 (
 	[ProjectID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[VW_ChatViewByProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_ChatViewByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_ChatViewByProjectID] AS SELECT C.ProjectID, C.Text, P.PublishedAt, U.Name, C.IsPrivate FROM Chats AS C INNER JOIN PublishingInformation AS P ON C.PublishingInfoID = P.ID INNER JOIN Members AS M ON P.PublisherID = M.ID INNER JOIN Users AS U ON M.UserID = U.ID
+CREATE VIEW [dbo].[VW_ChatViewByProjectID]
+AS
+SELECT C.ProjectID, C.Text, P.PublishedAt, U.Name AS UserName, C.IsPrivate
+FROM     dbo.Chats AS C INNER JOIN
+                  dbo.PublishingInformation AS P ON C.PublishingInfoID = P.ID INNER JOIN
+                  dbo.Members AS M ON P.PublisherID = M.ID INNER JOIN
+                  dbo.Users AS U ON M.UserID = U.ID
 GO
-/****** Object:  Table [dbo].[Events]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Events]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -293,20 +318,28 @@ CREATE TABLE [dbo].[Events](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [CLI_Event_ProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [CLI_Event_ProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE CLUSTERED INDEX [CLI_Event_ProjectID] ON [dbo].[Events]
 (
 	[ProjectID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[VW_EventViewByEventID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_EventViewByEventID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_EventViewByEventID] AS SELECT E.ID AS EventID, E.Name, S.FromDate, S.ToDate, E.URLLink AS EventURLLink, E.IsPrivate, N.Text, N.URLLink AS NoteURLLink FROM Events AS E INNER JOIN Schedules AS S ON E.ScheduleID = S.ID LEFT JOIN Notes AS N ON E.NoteID = N.ID INNER JOIN PublishingInformation AS P ON E.PublishingInfoID = P.ID INNER JOIN Members AS M ON P.PublisherID = M.ID INNER JOIN Users AS U ON M.UserID = U.ID
+CREATE VIEW [dbo].[VW_EventViewByEventID]
+AS
+SELECT E.ID AS EventID, E.Name AS EventName, S.FromDate, S.ToDate, E.URLLink AS EventURLLink, E.IsPrivate, N.ID AS NoteID, N.Text, N.URLLink AS NoteURLLink, P.PublishedAt, U.Name AS UserName
+FROM     dbo.Events AS E INNER JOIN
+                  dbo.Schedules AS S ON E.ScheduleID = S.ID LEFT OUTER JOIN
+                  dbo.Notes AS N ON E.NoteID = N.ID INNER JOIN
+                  dbo.PublishingInformation AS P ON E.PublishingInfoID = P.ID INNER JOIN
+                  dbo.Members AS M ON P.PublisherID = M.ID INNER JOIN
+                  dbo.Users AS U ON M.UserID = U.ID
 GO
-/****** Object:  Table [dbo].[Lists]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Lists]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -324,13 +357,13 @@ CREATE TABLE [dbo].[Lists](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [CLI_List_ProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [CLI_List_ProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE CLUSTERED INDEX [CLI_List_ProjectID] ON [dbo].[Lists]
 (
 	[ProjectID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Columns]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Columns]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -348,13 +381,13 @@ CREATE TABLE [dbo].[Columns](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [CLI_Column_ProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [CLI_Column_ProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE CLUSTERED INDEX [CLI_Column_ProjectID] ON [dbo].[Columns]
 (
 	[ProjectID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Cards]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Cards]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -366,38 +399,39 @@ CREATE TABLE [dbo].[Cards](
 	[ScheduleID] [int] NULL,
 	[NoteID] [int] NULL,
 	[PublishingInfoID] [int] NOT NULL,
+	[IsPrivate] [bit] NOT NULL,
  CONSTRAINT [PK__Cards__3214EC2672C6834D] PRIMARY KEY NONCLUSTERED 
 (
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [CLI_Card_ColumnID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [CLI_Card_ColumnID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE CLUSTERED INDEX [CLI_Card_ColumnID] ON [dbo].[Cards]
 (
 	[ColumnID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[VW_EventViewByProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_EventViewByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE VIEW [dbo].[VW_EventViewByProjectID]
 AS
-SELECT TOP (100) PERCENT ProjectID, ItemID, Title, FromDate, ToDate, PublishedAt
-FROM     (SELECT E.ProjectID, E.ID AS ItemID, E.Name AS Title, S.FromDate, S.ToDate, P.PublishedAt
+SELECT TOP (100) PERCENT ProjectID, ItemID, Title, FromDate, ToDate, PublishedAt, IsPrivate
+FROM     (SELECT E.ProjectID, E.ID AS ItemID, E.Name AS Title, S.FromDate, S.ToDate, P.PublishedAt, E.IsPrivate
                   FROM      dbo.Events AS E INNER JOIN
                                     dbo.Schedules AS S ON E.ScheduleID = S.ID INNER JOIN
                                     dbo.PublishingInformation AS P ON E.PublishingInfoID = P.ID
                   UNION ALL
-                  SELECT L.ProjectID, TD.ID AS ItemID, TD.Text AS Title, S.FromDate, S.ToDate, P.PublishedAt
+                  SELECT L.ProjectID, TD.ID AS ItemID, TD.Text AS Title, S.FromDate, S.ToDate, P.PublishedAt, TD.IsPrivate
                   FROM     dbo.To_Dos AS TD INNER JOIN
                                     dbo.Schedules AS S ON TD.ScheduleID = S.ID INNER JOIN
                                     dbo.Lists AS L ON TD.ListID = L.ID INNER JOIN
                                     dbo.PublishingInformation AS P ON TD.PublishingInfoID = P.ID
                   UNION ALL
-                  SELECT Col.ProjectID, C.ID AS ItemID, C.Title, S.FromDate, S.ToDate, P.PublishedAt
+                  SELECT Col.ProjectID, C.ID AS ItemID, C.Title, S.FromDate, S.ToDate, P.PublishedAt, C.IsPrivate
                   FROM     dbo.Cards AS C INNER JOIN
                                     dbo.Schedules AS S ON C.ScheduleID = S.ID INNER JOIN
                                     dbo.Columns AS Col ON C.ColumnID = Col.ID INNER JOIN
@@ -405,7 +439,7 @@ FROM     (SELECT E.ProjectID, E.ID AS ItemID, E.Name AS Title, S.FromDate, S.ToD
 WHERE  (ToDate >= CAST(GETDATE() AS DATE))
 ORDER BY PublishedAt DESC
 GO
-/****** Object:  Table [dbo].[Questions]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Questions]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -423,27 +457,31 @@ CREATE TABLE [dbo].[Questions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [CLI_Quest_ProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [CLI_Quest_ProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE CLUSTERED INDEX [CLI_Quest_ProjectID] ON [dbo].[Questions]
 (
 	[ProjectID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[VW_QuestionViewByQuestionID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_QuestionViewByQuestionID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE VIEW [dbo].[VW_QuestionViewByQuestionID] AS SELECT Q.ID AS QuestionID, Q.Text, Q.IsPrivate, S.FromDate, S.ToDate FROM Questions AS Q INNER JOIN Schedules AS S ON Q.ScheduleID = S.ID
 GO
-/****** Object:  View [dbo].[VW_QuestionViewByProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_QuestionViewByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_QuestionViewByProjectID] AS SELECT Q.ProjectID, Q.Text, S.FromDate, S.ToDate FROM Questions AS Q INNER JOIN Schedules AS S ON Q.ScheduleID = S.ID
+CREATE VIEW [dbo].[VW_QuestionViewByProjectID]
+AS
+SELECT Q.ID AS QuestionID, Q.ProjectID, Q.Text, S.FromDate, S.ToDate, Q.IsPrivate
+FROM     dbo.Questions AS Q INNER JOIN
+                  dbo.Schedules AS S ON Q.ScheduleID = S.ID
 GO
-/****** Object:  Table [dbo].[Answers]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Answers]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -460,14 +498,22 @@ CREATE TABLE [dbo].[Answers](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[VW_AnswerViewByQuestionID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_AnswerViewByQuestionID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_AnswerViewByQuestionID] AS SELECT A.QuestionID, N.Text, N.URLLink, P.PublishedAt, U.Name FROM Answers AS A LEFT JOIN Questions AS Q ON A.QuestionID = Q.ID LEFT JOIN Notes AS N ON A.AnswerID = N.ID INNER JOIN PublishingInformation AS P ON N.PublishingInfoID = P.ID INNER JOIN Members AS M ON P.PublisherID = M.ID INNER JOIN Users AS U ON M.UserID = U.ID
+CREATE VIEW [dbo].[VW_AnswerViewByQuestionID]
+AS
+SELECT A.ID AS AnswerID, A.QuestionID, N.ID AS NoteID, N.Text, N.URLLink, P.PublishedAt, U.Name
+FROM     dbo.Answers AS A LEFT OUTER JOIN
+                  dbo.Questions AS Q ON A.QuestionID = Q.ID LEFT OUTER JOIN
+                  dbo.Notes AS N ON A.AnswerID = N.ID INNER JOIN
+                  dbo.PublishingInformation AS P ON N.PublishingInfoID = P.ID INNER JOIN
+                  dbo.Members AS M ON P.PublisherID = M.ID INNER JOIN
+                  dbo.Users AS U ON M.UserID = U.ID
 GO
-/****** Object:  Table [dbo].[Steps]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Steps]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -484,48 +530,82 @@ CREATE TABLE [dbo].[Steps](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [CLI_Step_CardID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [CLI_Step_CardID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE CLUSTERED INDEX [CLI_Step_CardID] ON [dbo].[Steps]
 (
 	[CardID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[VW_StepViewByCardID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_StepViewByCardID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_StepViewByCardID] AS SELECT C.ID AS CardID, S.Text, S.IsChecked FROM Steps AS S INNER JOIN Cards AS C ON S.CardID = C.ID
+CREATE VIEW [dbo].[VW_StepViewByCardID]
+AS
+SELECT S.ID AS StepID, C.ID AS CardID, S.Text, S.IsChecked
+FROM     dbo.Steps AS S INNER JOIN
+                  dbo.Cards AS C ON S.CardID = C.ID
 GO
-/****** Object:  View [dbo].[VW_CardViewByCardID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_CardViewByCardID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_CardViewByCardID] AS SELECT C.ID AS CardID, Col.Title AS ColumnTitle, C.Title AS CardTitle, S.FromDate, S.ToDate, P.PublishedAt, U.Name FROM Cards AS C INNER JOIN Columns AS Col ON C.ColumnID = Col.ID LEFT JOIN Notes AS N ON C.NoteID = N.ID LEFT JOIN Schedules AS S ON C.ScheduleID = S.ID INNER JOIN PublishingInformation AS P ON C.PublishingInfoID = P.ID INNER JOIN Members AS M ON P.PublisherID = M.ID INNER JOIN Users AS U ON M.UserID = U.ID
+CREATE VIEW [dbo].[VW_CardViewByCardID]
+AS
+SELECT C.ID AS CardID, Col.Title AS ColumnTitle, C.Title AS CardTitle, N.ID AS NoteID, N.Text AS NoteText, N.URLLink, S.FromDate, S.ToDate, P.PublishedAt, U.Name AS Username
+FROM     dbo.Cards AS C INNER JOIN
+                  dbo.Columns AS Col ON C.ColumnID = Col.ID LEFT OUTER JOIN
+                  dbo.Notes AS N ON C.NoteID = N.ID LEFT OUTER JOIN
+                  dbo.Schedules AS S ON C.ScheduleID = S.ID INNER JOIN
+                  dbo.PublishingInformation AS P ON C.PublishingInfoID = P.ID INNER JOIN
+                  dbo.Members AS M ON P.PublisherID = M.ID INNER JOIN
+                  dbo.Users AS U ON M.UserID = U.ID
 GO
-/****** Object:  View [dbo].[VW_CardViewByColumnID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_CardViewByColumnID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_CardViewByColumnID] AS SELECT C.ColumnID, C.Title, S.FromDate, S.ToDate, P.PublishedAt, U.Name FROM Cards AS C LEFT JOIN Notes AS N ON C.NoteID = N.ID LEFT JOIN Schedules AS S ON C.ScheduleID = S.ID INNER JOIN PublishingInformation AS P ON C.PublishingInfoID = P.ID INNER JOIN Members AS M ON P.PublisherID = M.ID INNER JOIN Users AS U ON M.UserID = U.ID
+CREATE VIEW [dbo].[VW_CardViewByColumnID]
+AS
+SELECT C.ID AS CardID, C.ColumnID, C.Title, S.FromDate, S.ToDate, P.PublishedAt, U.Name AS Username, C.IsPrivate
+FROM     dbo.Cards AS C LEFT OUTER JOIN
+                  dbo.Notes AS N ON C.NoteID = N.ID LEFT OUTER JOIN
+                  dbo.Schedules AS S ON C.ScheduleID = S.ID INNER JOIN
+                  dbo.PublishingInformation AS P ON C.PublishingInfoID = P.ID INNER JOIN
+                  dbo.Members AS M ON P.PublisherID = M.ID INNER JOIN
+                  dbo.Users AS U ON M.UserID = U.ID
 GO
-/****** Object:  View [dbo].[VW_ColumnViewByColumnID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_ColumnViewByColumnID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_ColumnViewByColumnID] AS SELECT Col.ID AS ColumnID, Col.Title, Col.Description FROM Columns AS Col
+CREATE VIEW [dbo].[VW_ColumnViewByColumnID]
+AS
+SELECT ID AS ColumnID, Title, Description,
+                      (SELECT COUNT(*) AS Expr1
+                       FROM      dbo.Cards AS C
+                       WHERE   (ColumnID = Col.ID)) AS CardsNum
+FROM     dbo.Columns AS Col
 GO
-/****** Object:  View [dbo].[VW_ColumnViewByProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_ColumnViewByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_ColumnViewByProjectID] AS SELECT Col.ProjectID, Col.ID AS ColumnID, Col.Title, Col.Description FROM Columns AS Col
+CREATE VIEW [dbo].[VW_ColumnViewByProjectID]
+AS
+SELECT Col.ProjectID, Col.ID AS ColumnID, Col.Title,
+                      (SELECT COUNT(*) AS Expr1
+                       FROM      dbo.Cards AS C
+                       WHERE   (ColumnID = Col.ID)) AS CardsNum, Col.Description, P.PublishedAt, Col.IsPrivate
+FROM     dbo.Columns AS Col INNER JOIN
+                  dbo.PublishingInformation AS P ON Col.PublishingInfoID = P.ID
 GO
-/****** Object:  Table [dbo].[ProjectComments]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[ProjectComments]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -547,37 +627,21 @@ PRIMARY KEY NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[VW_CommentViewByElementID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_CommentViewByElementID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_CommentViewByElementID] AS SELECT PC.MessageID, PC.DocumentID, PC.EventID, PC.To_DoID, PC.CardID, PC.StepID, N.Text, N.URLLink, P.PublishedAt, U.Name FROM ProjectComments AS PC INNER JOIN Notes AS N ON PC.NoteID = N.ID INNER JOIN PublishingInformation AS P ON PC.PublishingInfoID = P.ID INNER JOIN Members AS M ON P.PublisherID = M.ID INNER JOIN Users AS U ON M.UserID = U.ID
+CREATE VIEW [dbo].[VW_CommentViewByElementID]
+AS
+SELECT PC.ID AS CommentID, PC.MessageID, PC.DocumentID, PC.EventID, PC.To_DoID, PC.CardID, PC.StepID, N.ID AS NoteID, N.Text, N.URLLink, P.PublishedAt, U.Name
+FROM     dbo.ProjectComments AS PC INNER JOIN
+                  dbo.Notes AS N ON PC.NoteID = N.ID INNER JOIN
+                  dbo.PublishingInformation AS P ON PC.PublishingInfoID = P.ID INNER JOIN
+                  dbo.Members AS M ON P.PublisherID = M.ID INNER JOIN
+                  dbo.Users AS U ON M.UserID = U.ID
 GO
-/****** Object:  Table [dbo].[Files]    Script Date: 1/12/2026 11:40:21 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Files](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[FilePath] [nvarchar](4000) NOT NULL,
-	[Caption] [nvarchar](200) NULL,
-	[NoteID] [int] NOT NULL,
- CONSTRAINT [PK__Files__3214EC27106EF2CE] PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  View [dbo].[VW_FileViewByNoteID]    Script Date: 1/12/2026 11:40:21 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE VIEW [dbo].[VW_FileViewByNoteID] AS SELECT F.NoteID, F.FilePath, F.Caption FROM Files AS F
-GO
-/****** Object:  Table [dbo].[Assignments]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Assignments]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -591,20 +655,22 @@ CREATE TABLE [dbo].[Assignments](
 	[StepID] [int] NULL,
 	[QuestionID] [int] NULL,
 	[CardID] [int] NULL,
+	[ClientID] [int] NULL,
+	[CommentID] [int] NULL,
  CONSTRAINT [PK__Assignme__3214EC27CEA234D5] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[VW_AssignmentViewByElementID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_AssignmentViewByElementID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE VIEW [dbo].[VW_AssignmentViewByElementID] AS SELECT A.QuestionID, A.EventID, A.To_DoID, A.CardID, A.StepID, U.Name FROM Assignments AS A INNER JOIN Members AS M ON A.MemberID = M.ID INNER JOIN Users AS U ON M.UserID = U.ID
 GO
-/****** Object:  Table [dbo].[Activities]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Activities]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -630,75 +696,52 @@ CREATE TABLE [dbo].[Activities](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[VW_ActivityViewByProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_ActivityViewByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE VIEW [dbo].[VW_ActivityViewByProjectID] AS SELECT A.ProjectID, A.Text, A.AnswerID, A.CardID, A.ChatID, A.CommentID, A.DocumentID, A.EventID, A.MessageID, P.PublishedAt FROM Activities AS A INNER JOIN PublishingInformation AS P ON A.PublishingInfoID = P.ID
 GO
-/****** Object:  View [dbo].[VW_ElementCommentView]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Files]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_ElementCommentView] AS
-SELECT 
-PC.MessageID,
-PC.DocumentID,
-PC.EventID,
-PC.To_DoID,
-PC.CardID,
-PC.StepID,
-N.Text,
-N.URLLink,
-P.PublishedAt,
-U.Name
-
-FROM ProjectComments AS PC
-INNER JOIN 
-Notes AS N ON PC.NoteID = N.ID
-INNER JOIN
-PublishingInformation AS P ON PC.PublishingInfoID = P.ID
-INNER JOIN 
-Members AS M ON P.PublisherID = M.ID
-INNER JOIN
-Users AS U ON M.UserID = U.ID
+CREATE TABLE [dbo].[Files](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[FilePath] [nvarchar](4000) NOT NULL,
+	[Caption] [nvarchar](200) NULL,
+	[NoteID] [int] NOT NULL,
+ CONSTRAINT [PK__Files__3214EC27106EF2CE] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[VW_FileByNoteID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_FileByNoteID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_FileByNoteID] AS
-SELECT 
-F.NoteID,
-F.FilePath,
-F.Caption
-FROM Files AS F
+CREATE VIEW [dbo].[VW_FileByNoteID]
+AS
+SELECT ID AS FileID, NoteID, FilePath, Caption
+FROM     dbo.Files AS F
 GO
-/****** Object:  View [dbo].[VW_AssignmentByElementID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_AssignmentByElementID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[VW_AssignmentByElementID] AS
-
-SELECT 
-A.QuestionID,
-A.EventID,
-A.To_DoID,
-A.CardID,
-A.StepID,
-U.Name
-
-FROM Assignments AS A
-INNER JOIN
-Members AS M ON A.MemberID = M.ID
-INNER JOIN
-Users AS U ON M.UserID = U.ID
+CREATE VIEW [dbo].[VW_AssignmentByElementID]
+AS
+SELECT A.QuestionID, A.EventID, A.To_DoID, A.CardID, A.StepID, A.CommentID, U.Name AS MemberName
+FROM     dbo.Assignments AS A INNER JOIN
+                  dbo.Members AS M ON A.MemberID = M.ID INNER JOIN
+                  dbo.Users AS U ON M.UserID = U.ID
 GO
-/****** Object:  View [dbo].[VW_ActivityByProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_ActivityByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -709,130 +752,7 @@ SELECT A.ProjectID, A.Text, A.AnswerID, A.CardID, A.ChatID, A.CommentID, A.Docum
 FROM     dbo.Activities AS A INNER JOIN
                   dbo.PublishingInformation AS P ON A.PublishingInfoID = P.ID
 GO
-/****** Object:  Table [dbo].[MessageBoards]    Script Date: 1/12/2026 11:40:21 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[MessageBoards](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[ProjectID] [int] NOT NULL,
-	[Title] [nvarchar](50) NULL,
-	[IsPrivate] [bit] NOT NULL,
-	[PublishingInfoID] [int] NOT NULL,
-	[NoteID] [int] NOT NULL,
- CONSTRAINT [PK__MessageB__3214EC2619ACF91F] PRIMARY KEY NONCLUSTERED 
-(
-	[ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Index [CLI_MsgBoard_ProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
-CREATE CLUSTERED INDEX [CLI_MsgBoard_ProjectID] ON [dbo].[MessageBoards]
-(
-	[ProjectID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-/****** Object:  View [dbo].[VW_MessageBoard]    Script Date: 1/12/2026 11:40:21 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-            CREATE VIEW [dbo].[VW_MessageBoard] AS
-                    SELECT 
-                M.ID AS MessageID,
-                M.Title, 
-                MN.Text, 
-                MN.URLLink,
-                MP.PublishedAt,
-                MPMU.Name
-            
-            
-            FROM MessageBoards AS M
-            LEFT JOIN Notes AS MN 
-                ON M.NoteID = MN.ID
-            LEFT JOIN PublishingInformation AS MP 
-                ON M.PublishingInfoID = MP.ID
-            LEFT JOIN Members AS MPM 
-                ON MP.PublisherID = MPM.ID
-            LEFT JOIN Users AS MPMU 
-                ON MPM.UserID = MPMU.ID
-             
-GO
-/****** Object:  View [dbo].[VW_MessageBoardByMessageID]    Script Date: 1/12/2026 11:40:21 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE VIEW [dbo].[VW_MessageBoardByMessageID] AS SELECT M.ID AS MessageID, M.Title, MN.Text, MN.URLLink, MP.PublishedAt, MPMU.Name FROM MessageBoards AS M LEFT JOIN Notes AS MN ON M.NoteID = MN.ID LEFT JOIN PublishingInformation AS MP ON M.PublishingInfoID = MP.ID LEFT JOIN Members AS MPM ON MP.PublisherID = MPM.ID LEFT JOIN Users AS MPMU ON MPM.UserID = MPMU.ID
-GO
-/****** Object:  View [dbo].[VW_MessageBoardByProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE VIEW [dbo].[VW_MessageBoardByProjectID]
-AS
-SELECT TOP (100) PERCENT MB.Title, U.Name, P.PublishedAt, N.Text, N.URLLink, MB.ProjectID
-FROM     dbo.MessageBoards AS MB LEFT OUTER JOIN
-                  dbo.Notes AS N ON MB.NoteID = N.ID INNER JOIN
-                  dbo.PublishingInformation AS P ON MB.PublishingInfoID = P.ID INNER JOIN
-                  dbo.Members AS M ON P.PublisherID = M.ID INNER JOIN
-                  dbo.Users AS U ON M.UserID = U.ID
-GO
-/****** Object:  View [dbo].[VW_ListViewByListID]    Script Date: 1/12/2026 11:40:21 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE VIEW [dbo].[VW_ListViewByListID] AS SELECT L.ID AS ListID, L.Title, L.IsPrivate, N.Text, N.URLLink FROM Lists AS L LEFT JOIN Notes AS N ON L.NoteID = N.ID
-GO
-/****** Object:  View [dbo].[VW_ListViewByProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE VIEW [dbo].[VW_ListViewByProjectID] AS SELECT L.ProjectID, L.Title, N.Text, N.URLLink, F.Caption FROM Lists AS L LEFT JOIN Notes AS N ON L.NoteID = N.ID LEFT JOIN Files AS F ON N.ID = F.NoteID
-GO
-/****** Object:  View [dbo].[VW_ToDoViewByToDoID]    Script Date: 1/12/2026 11:40:21 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE VIEW [dbo].[VW_ToDoViewByToDoID] AS SELECT TD.ID AS To_DoID, TD.Text, TD.Checked, TD.IsPrivate, N.Text AS NoteText, N.URLLink, P.PublishedAt, U.Name FROM To_Dos AS TD LEFT JOIN Notes AS N ON TD.NoteID = N.ID INNER JOIN PublishingInformation AS P ON TD.PublishingInfoID = P.ID INNER JOIN Members AS M ON P.PublisherID = M.ID INNER JOIN Users AS U ON M.UserID = U.ID WHERE TD.ID = 5
-GO
-/****** Object:  Table [dbo].[Clients]    Script Date: 1/12/2026 11:40:21 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Clients](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[UserID] [int] NOT NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[CommentSubscriptions]    Script Date: 1/12/2026 11:40:21 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[CommentSubscriptions](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[MemberID] [int] NOT NULL,
-	[CommentID] [int] NOT NULL,
-	[ProjectID] [int] NOT NULL,
- CONSTRAINT [PK__CommentS__3214EC270B276243] PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Invitations]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[Invitations]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -855,7 +775,7 @@ CREATE TABLE [dbo].[Invitations](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[InvitationStatuses]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[InvitationStatuses]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -869,7 +789,234 @@ CREATE TABLE [dbo].[InvitationStatuses](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Projects]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  View [dbo].[VW_InvitationProject]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Invitations, Teem Members, Clients VIEWS
+
+-- Invitation VIEWS
+-- 1:
+CREATE VIEW [dbo].[VW_InvitationProject] AS
+SELECT 
+I.ID AS InvitationID,
+I.TheInvitedName,
+P.PublishedAt,
+InvitStat.Name,
+I.ProjectID
+
+FROM Invitations AS I
+INNER JOIN
+PublishingInformation AS P ON I.PublishingInfoID = P.ID
+INNER JOIN 
+InvitationStatuses AS InvitStat ON I.StatusID = InvitStat.ID
+GO
+/****** Object:  View [dbo].[VW_Invitation]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- 2:
+CREATE VIEW [dbo].[VW_Invitation] AS
+SELECT 
+I.ID AS InvitationID,
+I.TheInvitedName,
+I.Email,
+I.Text,
+I.JobTitle,
+I.CompanyName,
+P.PublishedAt,
+U.Name AS InviterName,
+InvitStat.Name
+
+FROM Invitations AS I
+INNER JOIN
+PublishingInformation AS P ON I.PublishingInfoID = P.ID
+INNER JOIN 
+InvitationStatuses AS InvitStat ON I.StatusID = InvitStat.ID
+INNER JOIN 
+Members AS M ON P.PublisherID = M.ID
+INNER JOIN
+Users AS U ON M.UserID = U.ID
+GO
+/****** Object:  View [dbo].[VW_MemberProject]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/* Member VIEWS
+ 1:*/
+CREATE VIEW [dbo].[VW_MemberProject]
+AS
+SELECT DISTINCT M.ID AS MemberID, U.Name AS MemberName, U.CompanyName, U.JobTitle, A.ProjectID
+FROM     dbo.Members AS M INNER JOIN
+                  dbo.Users AS U ON M.UserID = U.ID INNER JOIN
+                  dbo.Assignments AS A ON M.ID = A.MemberID
+GO
+/****** Object:  View [dbo].[VW_Member]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/* 2:*/
+CREATE VIEW [dbo].[VW_Member]
+AS
+SELECT M.ID AS MemberID, U.Name AS MemberName, U.CompanyName, U.JobTitle
+FROM     dbo.Members AS M INNER JOIN
+                  dbo.Users AS U ON M.UserID = U.ID
+GO
+/****** Object:  Table [dbo].[Clients]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Clients](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[UserID] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[VW_ClientProject]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Client VIEWS
+-- 1:
+
+CREATE VIEW [dbo].[VW_ClientProject] AS
+SELECT
+C.ID AS ClientID,
+U.Name AS ClientName,
+U.CompanyName,
+A.ProjectID
+
+FROM Clients AS C
+INNER JOIN
+Users AS U ON C.UserID = U.ID
+INNER JOIN
+Assignments AS A ON C.ID = A.ClientID
+
+GO
+/****** Object:  View [dbo].[VW_Client]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- 2:
+
+CREATE VIEW [dbo].[VW_Client] AS
+SELECT
+C.ID AS ClientID,
+U.Name AS ClientName,
+U.CompanyName,
+U.JobTitle,
+U.Email
+
+
+FROM Clients AS C
+INNER JOIN
+Users AS U ON C.UserID = U.ID
+INNER JOIN
+Assignments AS A ON C.ID = A.ClientID
+GO
+/****** Object:  Table [dbo].[MessageBoards]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[MessageBoards](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ProjectID] [int] NOT NULL,
+	[Title] [nvarchar](50) NULL,
+	[IsPrivate] [bit] NOT NULL,
+	[PublishingInfoID] [int] NOT NULL,
+	[NoteID] [int] NOT NULL,
+ CONSTRAINT [PK__MessageB__3214EC2619ACF91F] PRIMARY KEY NONCLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Index [CLI_MsgBoard_ProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
+CREATE CLUSTERED INDEX [CLI_MsgBoard_ProjectID] ON [dbo].[MessageBoards]
+(
+	[ProjectID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[VW_MessageBoardByMessageID]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[VW_MessageBoardByMessageID]
+AS
+SELECT M.ID AS MessageID, M.Title, MN.ID AS NoteID, MN.Text, MN.URLLink, MP.PublishedAt, MPMU.Name
+FROM     dbo.MessageBoards AS M LEFT OUTER JOIN
+                  dbo.Notes AS MN ON M.NoteID = MN.ID LEFT OUTER JOIN
+                  dbo.PublishingInformation AS MP ON M.PublishingInfoID = MP.ID LEFT OUTER JOIN
+                  dbo.Members AS MPM ON MP.PublisherID = MPM.ID LEFT OUTER JOIN
+                  dbo.Users AS MPMU ON MPM.UserID = MPMU.ID
+GO
+/****** Object:  View [dbo].[VW_MessageBoardByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[VW_MessageBoardByProjectID]
+AS
+SELECT TOP (100) PERCENT MB.ID AS MessageID, MB.Title, U.Name, P.PublishedAt, N.Text, N.URLLink, MB.ProjectID, MB.IsPrivate
+FROM     dbo.MessageBoards AS MB LEFT OUTER JOIN
+                  dbo.Notes AS N ON MB.NoteID = N.ID INNER JOIN
+                  dbo.PublishingInformation AS P ON MB.PublishingInfoID = P.ID INNER JOIN
+                  dbo.Members AS M ON P.PublisherID = M.ID INNER JOIN
+                  dbo.Users AS U ON M.UserID = U.ID
+GO
+/****** Object:  View [dbo].[VW_ListViewByListID]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[VW_ListViewByListID]
+AS
+SELECT L.ID AS ListID, L.Title, L.IsPrivate, N.ID AS NoteID, N.Text, N.URLLink
+FROM     dbo.Lists AS L LEFT OUTER JOIN
+                  dbo.Notes AS N ON L.NoteID = N.ID
+GO
+/****** Object:  View [dbo].[VW_ListViewByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[VW_ListViewByProjectID]
+AS
+SELECT L.ProjectID, L.Title, N.Text, N.URLLink, F.Caption, L.IsPrivate
+FROM     dbo.Lists AS L LEFT OUTER JOIN
+                  dbo.Notes AS N ON L.NoteID = N.ID LEFT OUTER JOIN
+                  dbo.Files AS F ON N.ID = F.NoteID
+GO
+/****** Object:  View [dbo].[VW_ToDoViewByToDoID]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[VW_ToDoViewByToDoID]
+AS
+SELECT TD.ID AS To_DoID, TD.Text, TD.Checked, TD.IsPrivate, N.ID AS NoteID, N.Text AS NoteText, N.URLLink, P.PublishedAt, U.Name
+FROM     dbo.To_Dos AS TD LEFT OUTER JOIN
+                  dbo.Notes AS N ON TD.NoteID = N.ID INNER JOIN
+                  dbo.PublishingInformation AS P ON TD.PublishingInfoID = P.ID INNER JOIN
+                  dbo.Members AS M ON P.PublisherID = M.ID INNER JOIN
+                  dbo.Users AS U ON M.UserID = U.ID
+GO
+/****** Object:  Table [dbo].[Projects]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -877,14 +1024,14 @@ GO
 CREATE TABLE [dbo].[Projects](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](50) NOT NULL,
-	[PublishingInfoID] [int] NOT NULL,
+	[PublishingInfoID] [int] NULL,
  CONSTRAINT [PK__Projects__3214EC27201DD682] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ScheduleTypes]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Table [dbo].[ScheduleTypes]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -898,125 +1045,115 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Chat_PubInfoID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Chat_PubInfoID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Chat_PubInfoID] ON [dbo].[Chats]
 (
 	[PublishingInfoID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Column_PubInfoID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Column_PubInfoID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Column_PubInfoID] ON [dbo].[Columns]
 (
 	[PublishingInfoID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_CommSub_CommentID]    Script Date: 1/12/2026 11:40:21 PM ******/
-CREATE NONCLUSTERED INDEX [NCI_CommSub_CommentID] ON [dbo].[CommentSubscriptions]
-(
-	[CommentID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-/****** Object:  Index [NCI_CommSub_MemberID]    Script Date: 1/12/2026 11:40:21 PM ******/
-CREATE NONCLUSTERED INDEX [NCI_CommSub_MemberID] ON [dbo].[CommentSubscriptions]
-(
-	[MemberID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-GO
-/****** Object:  Index [NCI_Doc_PubInfoID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Doc_PubInfoID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Doc_PubInfoID] ON [dbo].[Documents]
 (
 	[PublishingInfoID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Event_PubInfoID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Event_PubInfoID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Event_PubInfoID] ON [dbo].[Events]
 (
 	[PublishingInfoID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Invt_ProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Invt_ProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Invt_ProjectID] ON [dbo].[Invitations]
 (
 	[ProjectID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_List_PubInfoID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_List_PubInfoID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_List_PubInfoID] ON [dbo].[Lists]
 (
 	[PublishingInfoID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Note_PubInfoID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Note_PubInfoID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Note_PubInfoID] ON [dbo].[Notes]
 (
 	[PublishingInfoID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Comment_CardID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Comment_CardID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Comment_CardID] ON [dbo].[ProjectComments]
 (
 	[CardID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Comment_DocumentID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Comment_DocumentID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Comment_DocumentID] ON [dbo].[ProjectComments]
 (
 	[DocumentID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Comment_EventID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Comment_EventID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Comment_EventID] ON [dbo].[ProjectComments]
 (
 	[EventID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Comment_MessageID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Comment_MessageID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Comment_MessageID] ON [dbo].[ProjectComments]
 (
 	[MessageID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Comment_ProjectID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Comment_ProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Comment_ProjectID] ON [dbo].[ProjectComments]
 (
 	[ProjectID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Comment_StepID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Comment_StepID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Comment_StepID] ON [dbo].[ProjectComments]
 (
 	[StepID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Comment_ToDoID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Comment_ToDoID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Comment_ToDoID] ON [dbo].[ProjectComments]
 (
 	[To_DoID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Schedule_TypeID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Schedule_TypeID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Schedule_TypeID] ON [dbo].[Schedules]
 (
 	[ScheduleTypeID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_Step_PubInfoID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_Step_PubInfoID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_Step_PubInfoID] ON [dbo].[Steps]
 (
 	[PublishingInfoID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_ToDo_PubInfoID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_ToDo_PubInfoID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_ToDo_PubInfoID] ON [dbo].[To_Dos]
 (
 	[PublishingInfoID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [NCI_ToDo_ScheduleID]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  Index [NCI_ToDo_ScheduleID]    Script Date: 2/3/2026 12:28:17 AM ******/
 CREATE NONCLUSTERED INDEX [NCI_ToDo_ScheduleID] ON [dbo].[To_Dos]
 (
 	[ScheduleID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Cards] ADD  DEFAULT ((1)) FOR [IsPrivate]
 GO
 ALTER TABLE [dbo].[PublishingInformation] ADD  CONSTRAINT [DF__Publishin__Publi__6166761E]  DEFAULT (getdate()) FOR [PublishedAt]
 GO
@@ -1095,6 +1232,16 @@ REFERENCES [dbo].[Notes] ([ID])
 GO
 ALTER TABLE [dbo].[Answers] CHECK CONSTRAINT [FK_Answer_Note]
 GO
+ALTER TABLE [dbo].[Assignments]  WITH CHECK ADD  CONSTRAINT [Assign_ClientID] FOREIGN KEY([ClientID])
+REFERENCES [dbo].[Clients] ([ID])
+GO
+ALTER TABLE [dbo].[Assignments] CHECK CONSTRAINT [Assign_ClientID]
+GO
+ALTER TABLE [dbo].[Assignments]  WITH CHECK ADD  CONSTRAINT [ComID_AssinID] FOREIGN KEY([CommentID])
+REFERENCES [dbo].[ProjectComments] ([ID])
+GO
+ALTER TABLE [dbo].[Assignments] CHECK CONSTRAINT [ComID_AssinID]
+GO
 ALTER TABLE [dbo].[Assignments]  WITH CHECK ADD  CONSTRAINT [FK__Assignmen__Membe__7E37BEF6] FOREIGN KEY([MemberID])
 REFERENCES [dbo].[Members] ([ID])
 GO
@@ -1130,26 +1277,6 @@ REFERENCES [dbo].[Cards] ([ID])
 GO
 ALTER TABLE [dbo].[Assignments] CHECK CONSTRAINT [FK_Assign_CardID]
 GO
-ALTER TABLE [dbo].[Cards]  WITH CHECK ADD  CONSTRAINT [FK__Cards__ColumnID__1CBC4616] FOREIGN KEY([ColumnID])
-REFERENCES [dbo].[Columns] ([ID])
-GO
-ALTER TABLE [dbo].[Cards] CHECK CONSTRAINT [FK__Cards__ColumnID__1CBC4616]
-GO
-ALTER TABLE [dbo].[Cards]  WITH CHECK ADD  CONSTRAINT [FK__Cards__NoteID__28B808A7] FOREIGN KEY([NoteID])
-REFERENCES [dbo].[Notes] ([ID])
-GO
-ALTER TABLE [dbo].[Cards] CHECK CONSTRAINT [FK__Cards__NoteID__28B808A7]
-GO
-ALTER TABLE [dbo].[Cards]  WITH CHECK ADD  CONSTRAINT [FK__Cards__ScheduleI__208CD6FA] FOREIGN KEY([ScheduleID])
-REFERENCES [dbo].[Schedules] ([ID])
-GO
-ALTER TABLE [dbo].[Cards] CHECK CONSTRAINT [FK__Cards__ScheduleI__208CD6FA]
-GO
-ALTER TABLE [dbo].[Cards]  WITH CHECK ADD  CONSTRAINT [FK_crd_PubInfoID] FOREIGN KEY([PublishingInfoID])
-REFERENCES [dbo].[PublishingInformation] ([ID])
-GO
-ALTER TABLE [dbo].[Cards] CHECK CONSTRAINT [FK_crd_PubInfoID]
-GO
 ALTER TABLE [dbo].[Chats]  WITH CHECK ADD  CONSTRAINT [FK__Chats__ProjectID__14270015] FOREIGN KEY([ProjectID])
 REFERENCES [dbo].[Projects] ([ID])
 GO
@@ -1172,21 +1299,6 @@ ALTER TABLE [dbo].[Columns]  WITH CHECK ADD  CONSTRAINT [FK_Column_PubInfoID] FO
 REFERENCES [dbo].[PublishingInformation] ([ID])
 GO
 ALTER TABLE [dbo].[Columns] CHECK CONSTRAINT [FK_Column_PubInfoID]
-GO
-ALTER TABLE [dbo].[CommentSubscriptions]  WITH CHECK ADD  CONSTRAINT [FK__CommentSu__Membe__55009F39] FOREIGN KEY([MemberID])
-REFERENCES [dbo].[Members] ([ID])
-GO
-ALTER TABLE [dbo].[CommentSubscriptions] CHECK CONSTRAINT [FK__CommentSu__Membe__55009F39]
-GO
-ALTER TABLE [dbo].[CommentSubscriptions]  WITH CHECK ADD  CONSTRAINT [FK__CommentSu__Proje__51BA1E3A] FOREIGN KEY([ProjectID])
-REFERENCES [dbo].[Projects] ([ID])
-GO
-ALTER TABLE [dbo].[CommentSubscriptions] CHECK CONSTRAINT [FK__CommentSu__Proje__51BA1E3A]
-GO
-ALTER TABLE [dbo].[CommentSubscriptions]  WITH CHECK ADD  CONSTRAINT [FK_ComSubs_Comment] FOREIGN KEY([CommentID])
-REFERENCES [dbo].[ProjectComments] ([ID])
-GO
-ALTER TABLE [dbo].[CommentSubscriptions] CHECK CONSTRAINT [FK_ComSubs_Comment]
 GO
 ALTER TABLE [dbo].[Documents]  WITH CHECK ADD  CONSTRAINT [FK__Documents__Proje__40F9A68C] FOREIGN KEY([ProjectID])
 REFERENCES [dbo].[Projects] ([ID])
@@ -1397,7 +1509,7 @@ REFERENCES [dbo].[PublishingInformation] ([ID])
 GO
 ALTER TABLE [dbo].[To_Dos] CHECK CONSTRAINT [FK_ToDo_PubInfoID]
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddAnswer]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddAnswer]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1409,9 +1521,7 @@ CREATE PROCEDURE [dbo].[SP_AddAnswer]
     @QuestionID INT,
     @ProjectID INT,
     @AnswerText NVARCHAR(2000) = NULL,
-    @URLLink NVARCHAR(4000) = NULL,
-    @FilePath NVARCHAR(2000) = NULL,
-    @Caption NVARCHAR(200) = NULL
+    @URLLink NVARCHAR(4000) = NULL
    
        
     
@@ -1423,7 +1533,7 @@ BEGIN
     DECLARE @ErrorSeverity INT;
     DECLARE @ErrorState INT;
     
-    DECLARE @PublishingInfoID INT;
+    DECLARE @PubInfoID INT;
     DECLARE @NewNoteID INT;
 
 
@@ -1442,7 +1552,7 @@ BEGIN
 
       
 
-        IF  @AnswerText IS NULL AND @URLLink IS NULL AND @FilePath IS NULL AND @Caption IS NULL 
+        IF  @AnswerText IS NULL AND @URLLink IS NULL 
         BEGIN
             RAISERROR('Answer is required.', 16, 1);
         END
@@ -1480,33 +1590,23 @@ BEGIN
         END
       
         
-        -- Step 1: Create PublishingInformation record
+        -- Step 1: ALTER PublishingInformation record
         INSERT INTO dbo.PublishingInformation ( PublisherID)
         VALUES (@MemberID);
         
-        SET @PublishingInfoID = SCOPE_IDENTITY();
+        SET @PubInfoID = SCOPE_IDENTITY();
         
        
-        -- Step 2: Create Note record
 
             INSERT INTO dbo.Notes (Text, URLLink, PublishingInfoID, ProjectID)
-            VALUES (@AnswerText, @URLLink, @PublishingInfoID, @ProjectID);
+            VALUES (@AnswerText, @URLLink, @PubInfoID, @ProjectID);
             
             SET @NewNoteID = SCOPE_IDENTITY();
-            
-            -- Step 3: Create File record if file information is provided
-            IF @FilePath IS NOT NULL 
-            BEGIN
-                INSERT INTO dbo.Files (FilePath, Caption, NoteID)
-                VALUES (@FilePath, @Caption, @NewNoteID);
-                
-            END
+          
         
-        
-        -- Step 4: Create Question record
 
         INSERT INTO Answers(QuestionID, AnswerID, ProjectID, PublishingInfoID)
-        VALUES (@QuestionID, @NewNoteID, @ProjectID, @PublishingInfoID)
+        VALUES (@QuestionID, @NewNoteID, @ProjectID, @PubInfoID)
        
         
         COMMIT TRANSACTION;
@@ -1525,7 +1625,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddAssignment]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddAssignment]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1538,6 +1638,7 @@ CREATE PROCEDURE [dbo].[SP_AddAssignment]
     @CardID INT = NULL,
     @StepID INT = NULL,
     @QuestionID INT = NULL,
+    @CommentID INT = NULL,
     @ProjectID INT
        
     
@@ -1561,7 +1662,7 @@ BEGIN
         -- Validate required parameters
        
         
-        IF  @EventID IS NULL AND @To_DoID IS NULL AND  @StepID IS NULL AND @QuestionID IS NULL AND @CardID IS NULL
+        IF  @CommentID IS NULL AND @EventID IS NULL AND @To_DoID IS NULL AND  @StepID IS NULL AND @QuestionID IS NULL AND @CardID IS NULL
         BEGIN
             RAISERROR('Element is required.', 16, 1);
         END
@@ -1569,7 +1670,7 @@ BEGIN
 
         IF @MemberID IS NULL
         BEGIN
-            RAISERROR('PublisherID is required.', 16, 1);
+            RAISERROR('MemberID is required.', 16, 1);
         END
 
         IF @ProjectID IS NULL
@@ -1617,6 +1718,12 @@ BEGIN
             BEGIN
                 RAISERROR('Invalid StepID. Column does not exist.', 16, 1);
             END
+
+            -- Verify CommentID exists
+            IF NOT EXISTS (SELECT 1 FROM dbo.ProjectComments WHERE ID = @CommentID)
+            BEGIN
+                RAISERROR('Invalid CommentID. Comment does not exist.', 16, 1);
+            END
         END
 
         -- Validate that the member is part of the project
@@ -1629,8 +1736,8 @@ BEGIN
         
        
        
-        INSERT INTO Assignments(ProjectID, MemberID, EventID, To_DoID, CardID, StepID, QuestionID)
-        VALUES (@ProjectID, @MemberID, @EventID, @To_DoID,@CardID, @StepID, @QuestionID)
+        INSERT INTO Assignments(ProjectID, MemberID, EventID, To_DoID, CardID, StepID, QuestionID,CommentID)
+        VALUES (@ProjectID, @MemberID, @EventID, @To_DoID,@CardID, @StepID, @QuestionID, @CommentID)
        
         
         COMMIT TRANSACTION;
@@ -1650,7 +1757,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddCardToColumn]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddCardToColumn]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1663,9 +1770,7 @@ CREATE PROCEDURE [dbo].[SP_AddCardToColumn]
     @ToDate DATETIME = NULL,
     @ColumnID INT,
     @NoteText NVARCHAR(2000) = NULL,
-    @NoteURLLink NVARCHAR(4000) = NULL,
-    @FilePath NVARCHAR(2000) = NULL,
-    @FileCaption NVARCHAR(200) = NULL
+    @NoteURLLink NVARCHAR(4000) = NULL
         
 AS
 BEGIN
@@ -1711,30 +1816,23 @@ BEGIN
         
       
         
-        -- Step 1: Create PublishingInformation record
+        -- Add PublishingInformation record
         INSERT INTO dbo.PublishingInformation ( PublisherID)
         VALUES (@MemberID);
         
         SET @PublishingInfoID = SCOPE_IDENTITY();
         
-        -- Step 2: Create Note record if note text is provided
-        IF @NoteText IS NOT NULL OR @FilePath IS NOT NULL
+        --  Add Note record if note text is provided
+        IF @NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL
         BEGIN
             INSERT INTO dbo.Notes (Text, URLLink, PublishingInfoID, ProjectID)
             VALUES (@NoteText, @NoteURLLink, @PublishingInfoID, @ProjectID);
             
             SET @NoteID = SCOPE_IDENTITY();
-            
-            -- Step 3: Create File record if file information is provided
-            IF @FilePath IS NOT NULL AND @NoteID IS NOT NULL
-            BEGIN
-                INSERT INTO dbo.Files (FilePath, Caption, NoteID)
-                VALUES (@FilePath, @FileCaption, @NoteID);
-                
-            END
+                        
         END
 
-          -- Step 2: Create Schedule record if dates are provided
+          --  Add Schedule record if dates are provided
           IF @FromDate IS NOT NULL AND @ToDate IS NOT NULL
         BEGIN
             INSERT INTO Schedules(FromDate,ToDate, ProjectID)
@@ -1744,7 +1842,7 @@ BEGIN
 
         END
         
-        -- Step 2: Create Card record
+        --  Add Card record
         INSERT INTO dbo.Cards(Title, ColumnID, NoteID, PublishingInfoID,ScheduleID)
         VALUES (@Title, @ColumnID, @NoteID, @PublishingInfoID,@ScheduleID);
         
@@ -1765,7 +1863,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddColumn]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddColumn]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1826,14 +1924,14 @@ BEGIN
             RAISERROR('Invalid ProjectID. Project does not exist.', 16, 1);
         END
         
-        -- Step 1: Create PublishingInformation record
+        -- Step 1: ALTER PublishingInformation record
         INSERT INTO dbo.PublishingInformation ( PublisherID)
         VALUES (@MemberID);
         
         SET @PublishingInfoID = SCOPE_IDENTITY();
         
         
-        -- Step 2: Create Column record
+        -- Step 2: ALTER Column record
         INSERT INTO dbo.Columns (Title, Description, PublishingInfoID, ProjectID, IsPrivate)
         VALUES (@Title, @Description, @PublishingInfoID, @ProjectID, @IsPrivate);
         
@@ -1853,7 +1951,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddComment]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddComment]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1868,9 +1966,7 @@ CREATE PROCEDURE [dbo].[SP_AddComment]
     @DocumentID    INT = NULL,
     @ProjectID     INT,
     @NoteText      NVARCHAR(2000) ,
-    @URLLink       NVARCHAR(4000) = NULL,
-    @FilePath NVARCHAR(2000) = NULL,
-    @Caption       NVARCHAR(200) = NULL
+    @URLLink       NVARCHAR(4000) = NULL
    
        
     
@@ -1899,7 +1995,7 @@ BEGIN
             RAISERROR('Element is required.', 16, 1);
         END
 
-        IF @NoteText IS NULL AND @URLLink IS NULL AND @FilePath IS NULL 
+        IF @NoteText IS NULL AND @URLLink IS NULL 
         BEGIN
             RAISERROR('Comment is required.', 16, 1);
         END
@@ -1985,32 +2081,26 @@ BEGIN
         END
         
         
-        -- Step 1: Create PublishingInformation record
+        -- Add PublishingInformation record
         INSERT INTO dbo.PublishingInformation (PublisherID)
         VALUES (@MemberID);
         
         SET @PublishingInfoID = SCOPE_IDENTITY();
         
        
-        -- Step 2: Create Note record
+        -- Add Note record
 
-        IF @NoteText IS NOT NULL OR @FilePath IS NOT NULL OR @URLLink IS NOT NULL
+        IF @NoteText IS NOT NULL OR  @URLLink IS NOT NULL
         BEGIN
             INSERT INTO dbo.Notes (Text, URLLink, PublishingInfoID, ProjectID)
             VALUES (@NoteText, @URLLink, @PublishingInfoID, @ProjectID);
             
             SET @NoteID = SCOPE_IDENTITY();
             
-            -- Step 3: Create File record if file information is provided
-            IF @FilePath IS NOT NULL 
-            BEGIN
-                INSERT INTO dbo.Files (FilePath, Caption, NoteID)
-                VALUES (@FilePath, @Caption, @NoteID);
-                
-            END
+           
         END
         
-        -- Step 4: Create Comment record
+        -- Add Comment record
 
         INSERT INTO ProjectComments(NoteID, EventID, To_DoID, CardID, StepID, MessageID, DocumentID, ProjectID,PublishingInfoID)
         VALUES (@NoteID, @EventID, @To_DoID, @CardID, @StepID, @MessageID, @DocumentID, @ProjectID, @PublishingInfoID)
@@ -2032,91 +2122,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddCommentSubscriper]    Script Date: 1/12/2026 11:40:21 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[SP_AddCommentSubscriper]
-    @MemberID  INT,
-    @CommentID INT,
-    @ProjectID INT
-    
- 
-AS
-BEGIN
-    SET NOCOUNT ON;
-    
-    DECLARE @ErrorMessage NVARCHAR(4000);
-    DECLARE @ErrorSeverity INT;
-    DECLARE @ErrorState INT;
-
-    
-    BEGIN TRY
-        BEGIN TRANSACTION;
-        
-        -- Validate required parameters
-
-
-        IF @MemberID IS NULL
-        BEGIN
-            RAISERROR('PublisherID is required.', 16, 1);
-        END
-
-        IF @ProjectID IS NULL
-        BEGIN
-            RAISERROR('ProjectID is required.', 16, 1);
-        END
-
-        IF @CommentID IS NULL
-        BEGIN
-            RAISERROR('CommentID is required.', 16, 1);
-        END
-        
-       
-        
-
-        -- Verify ProjectID exists
-        IF NOT EXISTS (SELECT 1 FROM dbo.Projects WHERE ID = @ProjectID)
-        BEGIN
-            RAISERROR('Invalid ProjectID. Column does not exist.', 16, 1);
-        END
-        
-        -- Verify PublisherID exists
-        IF NOT EXISTS (SELECT 1 FROM dbo.Members WHERE ID = @MemberID)
-        BEGIN
-            RAISERROR('Invalid PublisherID. Member does not exist.', 16, 1);
-        END
-
-        -- Verify CommentID exists
-        IF NOT EXISTS (SELECT 1 FROM dbo.ProjectComments WHERE ID = @CommentID)
-        BEGIN
-            RAISERROR('Invalid CommentID. Column does not exist.', 16, 1);
-        END
-        
-        -- Step 1: Create Comment record
-
-        INSERT INTO CommentSubscriptions(MemberID, CommentID, ProjectID)
-        VALUES (@MemberID, @CommentID, @ProjectID)
-       
-        
-        COMMIT TRANSACTION;
-            
-    END TRY
-
-    BEGIN CATCH
-        IF @@TRANCOUNT > 0
-            ROLLBACK TRANSACTION;
-            
-        SELECT @ErrorMessage = ERROR_MESSAGE(),
-               @ErrorSeverity = ERROR_SEVERITY(),
-               @ErrorState = ERROR_STATE();
-               
-        RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
-    END CATCH
-END
-GO
-/****** Object:  StoredProcedure [dbo].[SP_AddDocument]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddDocument]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2128,8 +2134,6 @@ CREATE PROCEDURE [dbo].[SP_AddDocument]
     @MemberID INT,
     @NoteText NVARCHAR(2000) = NULL,
     @NoteURLLink NVARCHAR(4000) = NULL,
-    @AttachmentFilePath NVARCHAR(2000) = NULL,
-    @AttachmentFileCaption NVARCHAR(200) = NULL,
     @IsPrivate BIT
 AS
 BEGIN
@@ -2175,30 +2179,23 @@ BEGIN
             RAISERROR('Invalid PublisherID. Member does not exist.', 16, 1);
         END
         
-        -- Step 1: Create PublishingInformation record
+        -- Add PublishingInformation record
         INSERT INTO dbo.PublishingInformation (PublisherID)
         VALUES (@MemberID);
         
         SET @PublishingInfoID = SCOPE_IDENTITY();
         
-        -- Step 2: Create Note record if note text is provided
-        IF @NoteText IS NOT NULL OR @AttachmentFilePath IS NOT NULL
+        -- Add Note record if note text is provided
+        IF @NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL
         BEGIN
             INSERT INTO dbo.Notes (Text, URLLink, PublishingInfoID, ProjectID)
             VALUES (@NoteText, @NoteURLLink, @PublishingInfoID, @ProjectID);
             
             SET @NoteID = SCOPE_IDENTITY();
             
-            -- Step 3: Create File record if attachment file information is provided
-            IF @AttachmentFilePath IS NOT NULL AND @NoteID IS NOT NULL
-            BEGIN
-                INSERT INTO dbo.Files (FilePath, Caption, NoteID)
-                VALUES (@AttachmentFilePath, @AttachmentFileCaption, @NoteID);
-                
-            END
         END
         
-        -- Step 4: Create Document record
+        -- Add Document record
         INSERT INTO dbo.Documents (Name, NoteID, FilePath, PublishingInfoID, ProjectID, IsPrivate)
         VALUES (@Name, @NoteID, @FilePath, @PublishingInfoID, @ProjectID, @IsPrivate);
         
@@ -2220,7 +2217,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddEvent]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddEvent]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2234,8 +2231,6 @@ CREATE PROCEDURE [dbo].[SP_AddEvent]
     @URLLink NVARCHAR(500) = NULL,
     @NoteText NVARCHAR(2000) = NULL,
     @NoteURLLink NVARCHAR(4000) = NULL,
-    @FilePath NVARCHAR(2000) = NULL,
-    @FileCaption NVARCHAR(200) = NULL,
     @IsPrivate BIT
 AS
 BEGIN
@@ -2286,31 +2281,23 @@ BEGIN
             RAISERROR('Invalid PublisherID. Member does not exist.', 16, 1);
         END
         
-        -- Step 1: Create PublishingInformation record
+        -- Add PublishingInformation record
         INSERT INTO dbo.PublishingInformation ( PublisherID)
         VALUES (@MemberID);
         
         SET @PublishingInfoID = SCOPE_IDENTITY();
         
-        -- Step 2: Create Note record if note text is provided
-        IF @NoteText IS NOT NULL OR @FilePath IS NOT NULL
+        -- Add Note record if note text is provided
+        IF @NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL
         BEGIN
             INSERT INTO dbo.Notes (Text, URLLink, PublishingInfoID, ProjectID)
             VALUES (@NoteText, @NoteURLLink, @PublishingInfoID, @ProjectID);
             
-            SET @NoteID = SCOPE_IDENTITY();
-            
-            -- Step 3: Create File record if file information is provided
-            IF @FilePath IS NOT NULL AND @NoteID IS NOT NULL
-            BEGIN
-                INSERT INTO dbo.Files (FilePath, Caption, NoteID)
-                VALUES (@FilePath, @FileCaption, @NoteID);
-                
-            END
+            SET @NoteID = SCOPE_IDENTITY();       
         END
 
 
-        -- Step 5: Create Schedule record
+        -- Add Schedule record
 
         INSERT INTO Schedules(FromDate,ToDate,ProjectID)
         VALUES (@FromDate, @ToDate, @ProjectID)
@@ -2319,7 +2306,7 @@ BEGIN
 
         
         
-        -- Step 4: Create Event record
+        -- Add Event record
         INSERT INTO dbo.Events (Name, NoteID, URLLink, PublishingInfoID, ScheduleID, ProjectID, IsPrivate)
         VALUES (@Name, @NoteID, @URLLink, @PublishingInfoID, @ScheduleID, @ProjectID, @IsPrivate);
        
@@ -2339,7 +2326,63 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddInvitation]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddFileToNote]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[SP_AddFileToNote]
+@NoteID INT,
+@FilePath NVARCHAR(MAX),
+@FileCaption NVARCHAR(100)
+
+AS 
+
+BEGIN
+
+SET NOCOUNT ON;
+
+	DECLARE @ErrorMessage VARCHAR(4000);
+	DECLARE @ErrorSeverity INT;
+	DECLARE @ErrorState INT;
+
+	BEGIN TRY
+		BEGIN TRANSACTION;
+
+		IF @NoteID IS NULL
+		BEGIN
+			RAISERROR('NoteID is required!', 16, 1)
+		END
+
+		IF (SELECT ID FROM Notes WHERE ID = @NoteID) IS NULL
+		BEGIN
+			RAISERROR('Note does not exist!', 16, 1)
+		END
+
+		INSERT INTO Files (NoteID, FilePath, Caption)
+		VALUES(@NoteID, @FilePath, @FileCaption)
+
+
+
+
+		COMMIT TRANSACTION;
+	END TRY
+
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0
+			ROLLBACK TRANSACTION;
+
+		SELECT @ErrorMessage = ERROR_MESSAGE(),
+			   @ErrorSeverity = ERROR_SEVERITY(),
+			   @ErrorState = ERROR_STATE()
+
+		RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState)
+
+	END CATCH
+
+END
+GO
+/****** Object:  StoredProcedure [dbo].[SP_AddInvitation]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2436,7 +2479,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddList]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddList]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2447,9 +2490,8 @@ CREATE PROCEDURE [dbo].[SP_AddList]
 @Title NVARCHAR(50),
 @NoteText NVARCHAR(2000) = NULL,
 @URLLink NVARCHAR(2000) = NULL,
-@FilePath NVARCHAR(MAX) = NULL,
-@Caption NVARCHAR(2000) = NULL,
 @IsPrivate BIT
+
 AS 
 BEGIN
     SET NOCOUNT ON;
@@ -2461,25 +2503,45 @@ BEGIN
     DECLARE @NewPubInfoID INT;
     DECLARE @NewNoteID INT;
     BEGIN TRANSACTION
-        
         BEGIN TRY
+
+
+        IF @ProjectID IS NULL
+        BEGIN
+             RAISERROR('ProjectID is required', 16, 1)
+        END
+
+        IF @MemberID IS NULL
+        BEGIN
+             RAISERROR('MemberID is required', 16, 1)
+        END
+
+        IF @IsPrivate IS NULL
+        BEGIN
+             RAISERROR('Privacy is required', 16, 1)
+        END
+
+        IF NOT EXISTS (SELECT ID FROM Projects WHERE ID = @ProjectID) 
+        BEGIN
+             RAISERROR('Project does not exist', 16, 1)
+        END
+
+        IF NOT EXISTS (SELECT MemberID FROM Assignments WHERE MemberID = @MemberID)
+        BEGIN
+             RAISERROR('Member does not exist in the project', 16, 1)
+        END
+
         INSERT INTO PublishingInformation(PublisherID)
         VALUES (@MemberID)
 
             SET @NewPubInfoID = SCOPE_IDENTITY();
 
-        IF @NoteText IS NOT NULL OR @URLLink IS NOT NULL OR @FilePath IS NOT NULL
+        IF @NoteText IS NOT NULL OR @URLLink IS NOT NULL
         BEGIN
-                INSERT INTO Notes(Text, URLLink, ProjectID, PublishingInfoID)
-                VALUES (@NoteText, @URLLink,@ProjectID,@NewPubInfoID)
-                    SET @NewNoteID = SCOPE_IDENTITY();
-
-                IF @FilePath IS NOT NULL
-                BEGIN 
-                    INSERT INTO Files(FilePath, Caption, NoteID)
-                    VALUES (@FilePath, @Caption, @NewNoteID)
-                 END
-            END
+             INSERT INTO Notes(Text, URLLink, ProjectID, PublishingInfoID)
+             VALUES (@NoteText, @URLLink,@ProjectID,@NewPubInfoID)
+             SET @NewNoteID = SCOPE_IDENTITY();
+        END
 
 
             INSERT INTO Lists(PublishingInfoID, ProjectID, Title, NoteID, IsPrivate)
@@ -2504,15 +2566,16 @@ BEGIN
     
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddMember]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddMember]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SP_AddMember]
     @Name NVARCHAR(100),
+    @ProjectID INT,
     @Email NVARCHAR(300),
-    @Password NVARCHAR(50), -- Assumed to be the unique value (hash)
+    @Password NVARCHAR(50), 
     @JobTitle NVARCHAR(50) = NULL,
     @CompanyName NVARCHAR(150) = NULL,
     @AdminID INT = NULL 
@@ -2548,12 +2611,17 @@ BEGIN
         INSERT INTO Users (Name, Email, Password, JobTitle, CompanyName)
         VALUES (@Name, @Email, @Password, @JobTitle, @CompanyName);
 
-        -- Get the ID of the newly created User
+        -- Get the ID of the newly ALTERd User
         DECLARE @NewUserID INT = SCOPE_IDENTITY();
 
         -- 4. Insert into Members table
         INSERT INTO Members (UserID, AdminID)
-        VALUES (@NewUserID, @AdminID);
+        VALUES (@NewUserID, @AdminID)
+        DECLARE @NewMemberID INT = SCOPE_IDENTITY();
+
+        -- 4. Insert into Assignment table to join the team
+        INSERT INTO Assignments (MemberID,ProjectID)
+        VALUES (@NewMemberID,@ProjectID)
 
         -- Commit the transaction if both inserts were successful
         COMMIT TRANSACTION;
@@ -2571,7 +2639,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddMessageToBoard]    Script Date: 1/12/2026 11:40:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddMessageToBoard]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2582,8 +2650,6 @@ CREATE PROCEDURE [dbo].[SP_AddMessageToBoard]
     @MemberID INT,
     @NoteText NVARCHAR(2000) = NULL,
     @NoteURLLink NVARCHAR(4000) = NULL,
-    @FilePath NVARCHAR(2000) = NULL,
-    @FileCaption NVARCHAR(200) = NULL,
     @IsPrivate BIT
 AS
 BEGIN
@@ -2594,9 +2660,8 @@ BEGIN
     DECLARE @ErrorState INT;
     
     DECLARE @PublishingInfoID INT;
-    DECLARE @NoteID INT = NULL;
-    DECLARE @FileID INT = NULL;
-    DECLARE @MessageBoardID INT;
+    DECLARE @NoteID INT;
+   
     
     BEGIN TRY
         BEGIN TRANSACTION;
@@ -2611,6 +2676,11 @@ BEGIN
         BEGIN
             RAISERROR('PublisherID is required.', 16, 1);
         END
+
+        IF @NoteText IS NULL OR @NoteURLLink IS NULL
+        BEGIN
+            RAISERROR('Message content is required.', 16, 1);
+        END
         
         -- Verify ProjectID exists
         IF NOT EXISTS (SELECT 1 FROM dbo.Projects WHERE ID = @ProjectID)
@@ -2624,35 +2694,27 @@ BEGIN
             RAISERROR('Invalid PublisherID. Member does not exist.', 16, 1);
         END
         
-        -- Step 1: Create PublishingInformation record
+        -- Add PublishingInformation record
         INSERT INTO dbo.PublishingInformation (PublisherID)
         VALUES (@MemberID);
         
         SET @PublishingInfoID = SCOPE_IDENTITY();
         
-        -- Step 2: Create Note record if note text is provided
-        IF @NoteText IS NOT NULL OR @FilePath IS NOT NULL
+        -- Add Note record if note text is provided
+        IF @NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL
         BEGIN
             INSERT INTO dbo.Notes (Text, URLLink, PublishingInfoID, ProjectID)
             VALUES (@NoteText, @NoteURLLink, @PublishingInfoID, @ProjectID);
             
             SET @NoteID = SCOPE_IDENTITY();
             
-            -- Step 3: Create File record if file information is provided
-            IF @FilePath IS NOT NULL AND @NoteID IS NOT NULL
-            BEGIN
-                INSERT INTO dbo.Files (FilePath, Caption, NoteID)
-                VALUES (@FilePath, @FileCaption, @NoteID);
-                
-                SET @FileID = SCOPE_IDENTITY();
-            END
+           
         END
         
-        -- Step 4: Create MessageBoard record
+        -- Add MessageBoard record
         INSERT INTO dbo.MessageBoards (PublishingInfoID, ProjectID, NoteID, Title, IsPrivate)
         VALUES (@PublishingInfoID, @ProjectID, @NoteID, @Title, @IsPrivate);
         
-        SET @MessageBoardID = SCOPE_IDENTITY();
         
         COMMIT TRANSACTION;
         
@@ -2670,7 +2732,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddMessageToChat]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddMessageToChat]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2723,7 +2785,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddProject]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddProject]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2783,7 +2845,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddQuestion]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddQuestion]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2841,21 +2903,21 @@ BEGIN
         
       
         
-        -- Step 1: Create PublishingInformation record
+        -- Step 1: ALTER PublishingInformation record
         INSERT INTO dbo.PublishingInformation ( PublisherID)
         VALUES (@MemberID);
         
         SET @PublishingInfoID = SCOPE_IDENTITY();
         
        
-        -- Step 2: Create Schedule record
+        -- Step 2: ALTER Schedule record
 
         INSERT INTO Schedules(FromDate,ToDate,ProjectID)
         VALUES (@FromDate, @ToDate, @ProjectID)
 
         SET @ScheduleID = SCOPE_IDENTITY();
         
-        -- Step 3: Create Question record
+        -- Step 3: ALTER Question record
 
         INSERT INTO Questions(Text, ScheduleID, ProjectID, PublishingInfoID, IsPrivate)
         VALUES (@Text, @ScheduleID, @ProjectID, @PublishingInfoID, @IsPrivate)
@@ -2877,7 +2939,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddStepToCard]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddStepToCard]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2931,7 +2993,7 @@ BEGIN
         
       
         
-        -- Step 1: Create PublishingInformation record
+        -- Step 1: ALTER PublishingInformation record
         INSERT INTO dbo.PublishingInformation ( PublisherID)
         VALUES (@MemberID);
         
@@ -2939,7 +3001,7 @@ BEGIN
         
        
         
-        -- Step 2: Create Step record
+        -- Step 2: ALTER Step record
         INSERT INTO dbo.Steps(CardID, Text, PublishingInfoID, IsChecked)
         VALUES (@CardID, @Text, @PublishingInfoID,0);
         
@@ -2960,7 +3022,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AddTo_DoToList]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AddTo_DoToList]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2974,8 +3036,6 @@ CREATE PROCEDURE [dbo].[SP_AddTo_DoToList]
     @ToDate DATETIME = NULL,
     @NoteText NVARCHAR(2000) = NULL,
     @NoteURLLink NVARCHAR(4000) = NULL,
-    @FilePath NVARCHAR(2000) = NULL,
-    @FileCaption NVARCHAR(200) = NULL,
     @IsPrivate BIT
     
 AS
@@ -3034,30 +3094,23 @@ BEGIN
         
         
         
-        -- Step 1: Create PublishingInformation record
+        -- Add PublishingInformation record
         INSERT INTO dbo.PublishingInformation (PublisherID)
         VALUES (@MemberID);
         
         SET @PublishingInfoID = SCOPE_IDENTITY();
         
-        -- Step 2: Create Note record if note text is provided
-        IF @NoteText IS NOT NULL OR @FilePath IS NOT NULL
+        -- Add Note record if note text is provided
+        IF @NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL
         BEGIN
             INSERT INTO dbo.Notes (Text, URLLink, PublishingInfoID, ProjectID)
             VALUES (@NoteText, @NoteURLLink, @PublishingInfoID, @ProjectID);
             
             SET @NoteID = SCOPE_IDENTITY();
-            
-            -- Step 3: Create File record if file information is provided
-            IF @FilePath IS NOT NULL AND @NoteID IS NOT NULL
-            BEGIN
-                INSERT INTO dbo.Files (FilePath, Caption, NoteID)
-                VALUES (@FilePath, @FileCaption, @NoteID);
-                
-            END
+           
         END
 
-        -- Step 6: Create Shedule record if dates were provided
+        -- Add Shedule record if dates were provided
         IF @FromDate IS NOT NULL AND @ToDate IS NOT NULL
         BEGIN
             INSERT INTO Schedules(FromDate,ToDate, ProjectID)
@@ -3067,7 +3120,7 @@ BEGIN
 
         END
         
-        -- Step 5: Create To_Do record
+        -- Add To_Do record
         INSERT INTO dbo.To_Dos (Text, NoteID, ListID,PublishingInfoID,Checked, ScheduleID, IsPrivate)
         VALUES (@Text, @NoteID, @ListID, @PublishingInfoID, 0, @ScheduleID, @IsPrivate);
         
@@ -3089,7 +3142,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_AnsweringInvitation]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_AnsweringInvitation]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3105,6 +3158,8 @@ BEGIN
     DECLARE @ErrorMessage NVARCHAR(4000);
     DECLARE @ErrorSeverity INT;
     DECLARE @ErrorState INT;
+
+    DECLARE @NewClientID INT;
     DECLARE @NewUserID INT;
     DECLARE @AdminID INT;
         
@@ -3144,7 +3199,6 @@ BEGIN
                 SET @NewUserID = SCOPE_IDENTITY();
 
                 -- 2.2. Get the AdminID from the Invitations/PublishingInformation tables
-                -- This assumes 'PublisingInfoID' is meant to be 'PublishingInfoID'
                 SELECT 
                     @AdminID = PI.PublisherID 
                 FROM 
@@ -3176,6 +3230,13 @@ BEGIN
                     ( UserID )
                     VALUES
                     ( @NewUserID );
+                    SET @NewClientID = SCOPE_IDENTITY()
+
+                   INSERT INTO Assignments (ProjectID, ClientID)
+                   SELECT ProjectID, @NewClientID
+                   FROM Invitations
+                   WHERE ID = @InvitationID;
+
                 END
             END
             
@@ -3203,15 +3264,15 @@ BEGIN
         END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteAnswer]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteAnswer]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+
+-- ALTER date: 2025-11-19
 -- Description: Deletes an Answer and its associated Note, Files, and Metadata.
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_DeleteAnswer]
@@ -3284,15 +3345,15 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteAssignment]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteAssignment]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+
+-- ALTER date: 2025-11-19
 -- Description: Deletes an Assignment.
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_DeleteAssignment]
@@ -3335,7 +3396,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteCard]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteCard]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3441,15 +3502,15 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteColumn]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteColumn]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+
+-- ALTER date: 2025-11-19
 -- Description: Deletes a Column.
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_DeleteColumn]
@@ -3516,7 +3577,6 @@ BEGIN
 
         DECLARE @ScheduleIDs TABLE (ID INT);
         INSERT INTO @ScheduleIDs SELECT ScheduleID FROM Cards WHERE ID IN (SELECT ID FROM @CardIDs) AND ScheduleID IS NOT NULL;
-        INSERT INTO @ScheduleIDs SELECT ScheduleID FROM Steps WHERE CardID IN (SELECT ID FROM @CardIDs) AND ScheduleID IS NOT NULL;
 
         
         -- Delete all cards comments
@@ -3569,7 +3629,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteComment]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteComment]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3638,77 +3698,15 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteCommentSubscriber]    Script Date: 1/12/2026 11:40:22 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[SP_DeleteCommentSubscriber]
-    @MemberID  INT,
-    @CommentID INT,
-    @ProjectID INT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    
-    DECLARE @ErrorMessage NVARCHAR(4000);
-    DECLARE @ErrorSeverity INT;
-    DECLARE @ErrorState INT;
-
-    BEGIN TRY
-        BEGIN TRANSACTION;
-        
-        -- 1. Validate required parameters
-        IF @MemberID IS NULL OR @CommentID IS NULL OR @ProjectID IS NULL
-        BEGIN
-            RAISERROR('MemberID, CommentID, and ProjectID are all required for removal.', 16, 1);
-        END
-
-        -- 2. Verify the subscription actually exists before trying to delete
-        IF NOT EXISTS (
-            SELECT 1 
-            FROM dbo.CommentSubscriptions 
-            WHERE MemberID = @MemberID 
-              AND CommentID = @CommentID 
-              AND ProjectID = @ProjectID
-        )
-        BEGIN
-            RAISERROR('Subscription not found. No record was deleted.', 16, 1);
-        END
-
-        -- 3. Perform the Delete
-        DELETE FROM dbo.CommentSubscriptions
-        WHERE MemberID = @MemberID 
-          AND CommentID = @CommentID 
-          AND ProjectID = @ProjectID;
-        
-        COMMIT TRANSACTION;
-            
-    END TRY
-
-    BEGIN CATCH
-        -- Rollback if there is an active transaction
-        IF @@TRANCOUNT > 0
-            ROLLBACK TRANSACTION;
-            
-        SELECT @ErrorMessage = ERROR_MESSAGE(),
-               @ErrorSeverity = ERROR_SEVERITY(),
-               @ErrorState = ERROR_STATE();
-               
-        RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
-    END CATCH
-END
-GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteDocument]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteDocument]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+
+-- ALTER date: 2025-11-19
 -- Description: Deletes a Document and its associated Note and Files.
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_DeleteDocument]
@@ -3736,13 +3734,34 @@ BEGIN
             RAISERROR('Invalid DocumentID. Document does not exist.', 16, 1);
         END
 
+        DECLARE @DocCommentIDs TABLE (ID INT);
+        INSERT INTO @DocCommentIDs (ID) (SELECT ID FROM ProjectComments WHERE DocumentID = @DocumentID)
+       
         SELECT @NoteIDToDelete = NoteID, @PubInfoIDToDelete = PublishingInfoID
         FROM dbo.Documents
         WHERE ID = @DocumentID;
 
-         DECLARE @DocCommentIDs TABLE (ID INT);
-        INSERT INTO @DocCommentIDs (ID) (SELECT ID FROM ProjectComments WHERE DocumentID = @DocumentID)
-       
+        DECLARE @PubInfoIDs TABLE (ID INT);
+        INSERT INTO @PubInfoIDs (ID) 
+        (SELECT PublishingInfoID 
+        FROM ProjectComments 
+        WHERE DocumentID = @DocumentID)
+         
+        INSERT INTO @PubInfoIDs (ID) 
+        (SELECT PublishingInfoID 
+        FROM Notes
+        WHERE ID = @NoteIDToDelete)
+
+        INSERT INTO @PubInfoIDs (ID) 
+        (SELECT PublishingInfoID 
+        FROM ProjectComments
+        WHERE ID IN (SELECT ID FROM @DocCommentIDs) )
+
+        INSERT INTO @PubInfoIDs (ID) 
+        (SELECT PublishingInfoID 
+        FROM Activities
+        WHERE DocumentID = @DocumentID )
+         
 
         DELETE FROM Activities
         WHERE DocumentID = @DocumentID
@@ -3758,15 +3777,16 @@ BEGIN
 
 
         
-        DELETE FROM PublishingInformation
-        Where ID = @PubInfoIDToDelete
-
+        
 
         IF @NoteIDToDelete IS NOT NULL
         BEGIN
             DELETE FROM dbo.Files WHERE NoteID = @NoteIDToDelete;
             DELETE FROM dbo.Notes WHERE ID = @NoteIDToDelete;
         END
+
+        DELETE FROM PublishingInformation
+        Where ID IN (SELECT ID FROM @PubInfoIDs)
 
         
             
@@ -3786,7 +3806,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteEvent]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteEvent]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3794,7 +3814,7 @@ GO
 
 -- =============================================
 -- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Deletes an Event and its associated Schedule, Note, and Files.
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_DeleteEvent]
@@ -3874,14 +3894,68 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteInvitation]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteFileFromNote]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[SP_DeleteFileFromNote]
+@FileID INT
+
+AS 
+BEGIN
+
+SET NOCOUNT ON;
+
+	DECLARE @ErrorMessage VARCHAR(4000);
+	DECLARE @ErrorSeverity INT;
+	DECLARE @ErrorState INT;
+
+	BEGIN TRY
+		BEGIN TRANSACTION;
+
+		IF @FileID IS NULL
+		BEGIN
+			RAISERROR('FileID is required!', 16, 1)
+		END
+
+		IF (SELECT ID FROM Files WHERE ID = @FileID) IS NULL
+		BEGIN
+			RAISERROR('File does not exist!', 16, 1)
+		END
+
+		
+		DELETE FROM Files
+		WHERE ID = @FileID;
+	
+
+
+
+		COMMIT TRANSACTION;
+	END TRY
+
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0
+			ROLLBACK TRANSACTION;
+
+		SELECT @ErrorMessage = ERROR_MESSAGE(),
+			   @ErrorSeverity = ERROR_SEVERITY(),
+			   @ErrorState = ERROR_STATE()
+
+		RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState)
+
+	END CATCH
+
+END
+GO
+/****** Object:  StoredProcedure [dbo].[SP_DeleteInvitation]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[SP_DeleteInvitation]
-    @InvitationID      INT,
+    @InvitationID INT,
     @ProjectID INT
        
     
@@ -3913,13 +3987,14 @@ BEGIN
             RAISERROR('Invalid ProjectID. Column does not exist.', 16, 1);
         END
 
+        
+
+        DELETE FROM Invitations
+        WHERE ID = @InvitationID AND ProjectID = @ProjectID
+
         DELETE FROM PublishingInformation
         WHERE ID = (SELECT PublishingInfoID FROM Invitations WHERE ID = @InvitationID)
        
-
-        DELETE FROM Invitations
-        WHERE ID = @InvitationID
-
               
         COMMIT TRANSACTION;
             
@@ -3938,7 +4013,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteList]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteList]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3946,7 +4021,7 @@ GO
 
 -- =============================================
 -- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Deletes a List and its associated Note and Files.
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_DeleteList]
@@ -4053,7 +4128,144 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteMessageFromChat]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteMember]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[SP_DeleteMember]
+    @MemberID INT,
+    @ProjectID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @UserID INT;
+    SELECT @UserID = UserID FROM Members WHERE ID = @MemberID;
+
+    IF @UserID IS NULL
+    BEGIN
+        RAISERROR('Member record not found.', 16, 1);
+        RETURN;
+    END
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        
+        DECLARE @PubInfoIDs TABLE (ID INT) 
+        INSERT INTO @PubInfoIDs (ID) SELECT ID FROM PublishingInformation WHERE PublisherID = @MemberID
+        UNION ALL
+        SELECT PublishingInfoID FROM Projects 
+        INNER JOIN PublishingInformation AS P ON Projects.PublishingInfoID = P.ID
+        WHERE P.PublisherID = @MemberID;
+
+        -- Identify Schedules to delete
+        DECLARE @ScheduleIDs TABLE (ID INT) 
+        INSERT INTO @ScheduleIDs (ID) 
+        SELECT ScheduleID FROM Events 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs) 
+        
+        UNION ALL
+        SELECT ScheduleID FROM Questions 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs) 
+
+        UNION ALL
+        SELECT ScheduleID FROM To_Dos 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs) AND ScheduleID IS NOT NULL
+
+        UNION ALL
+        SELECT ScheduleID FROM Cards 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs) AND ScheduleID IS NOT NULL;
+
+        -- Identify ALL Notes created by this member
+        DECLARE @MemberNoteIDs TABLE (ID INT)
+        INSERT INTO @MemberNoteIDs (ID) 
+        SELECT ID FROM Notes WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs);
+
+        -- CLEANUP CHILD TABLES (Order matters for Foreign Keys)
+        
+        DELETE FROM Activities
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs);
+
+        DELETE FROM Assignments WHERE MemberID = @MemberID;
+
+       
+        -- Delete Files attached to these Notes
+        DELETE FROM Files WHERE NoteID IN (SELECT ID FROM @MemberNoteIDs);
+
+        -- Delete the main entities
+        DELETE FROM ProjectComments 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs);
+
+        DELETE FROM MessageBoards 
+        WHERE NoteID IN (SELECT ID FROM @MemberNoteIDs);
+
+        DELETE FROM Events 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs);
+
+        DELETE FROM To_Dos 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs);
+
+        DELETE FROM Lists 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs);
+
+        DELETE FROM Answers 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs);
+
+        DELETE FROM Questions 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs);
+
+        DELETE FROM Steps 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs);
+
+        DELETE FROM Cards
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs);
+
+        DELETE FROM Columns 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs);
+
+        DELETE FROM Documents 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs);
+
+        DELETE FROM Chats 
+        WHERE PublishingInfoID IN (SELECT ID FROM @PubInfoIDs);
+
+        -- DELETE SYSTEM-LEVEL RECORDS
+        DELETE FROM Schedules WHERE ID IN (SELECT ID FROM @ScheduleIDs);
+        DELETE FROM Notes WHERE ID IN (SELECT ID FROM @MemberNoteIDs);
+        
+        -- Delete the Member AND PubInfo
+
+        -- Make the PubInfoID Null so we don't need to delete
+        -- the record from the Projects table
+
+        UPDATE Projects 
+        SET PublishingInfoID = NULL
+        WHERE ID = @ProjectID 
+
+        DELETE FROM PublishingInformation 
+        WHERE ID IN (SELECT ID FROM @PubInfoIDs) 
+
+        DELETE FROM Members 
+        WHERE ID = @MemberID;
+
+        DELETE FROM Users 
+        WHERE ID = @UserID;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+
+        DECLARE @ErrMsg NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrMsg, 16, 1);
+    END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[SP_DeleteMessageFromChat]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4061,7 +4273,7 @@ GO
 
 -- =============================================
 -- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Deletes a Chat.
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_DeleteMessageFromChat]
@@ -4107,14 +4319,14 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteMessageInBoard]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteMessageInBoard]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+
+-- ALTER date: 2025-11-19
 -- Description: Deletes a MessageBoard and its associated Note and Files.
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_DeleteMessageInBoard]
@@ -4196,7 +4408,64 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteProject]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_D]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ CREATE PROCEDURE [dbo].[SP_DeleteNote]
+    @NoteID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @ErrorMessage NVARCHAR(4000);
+    DECLARE @ErrorSeverity INT;
+    DECLARE @ErrorState INT;
+
+    DECLARE @ListNoteIDToDelete INT;
+    DECLARE @ListPubInfoIDToDelete INT;
+
+    DECLARE @To_DoNoteIDToDelete INT;
+    DECLARE @To_DoPubInfoIDToDelete INT
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        IF @NoteID IS NULL
+        BEGIN
+            RAISERROR('NoteID is required.', 16, 1);
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM dbo.Notes WHERE ID = @NoteID)
+        BEGIN
+            RAISERROR('Invalid NoteID. Note does not exist.', 16, 1);
+        END
+
+        DELETE FROM Files 
+        WHERE NoteID = @NoteID
+
+        DELETE FROM Notes
+        WHERE ID = @NoteID
+
+         
+   
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+
+        SELECT @ErrorMessage = ERROR_MESSAGE(),
+               @ErrorSeverity = ERROR_SEVERITY(),
+               @ErrorState = ERROR_STATE();
+
+        RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[SP_DeleteProject]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4390,15 +4659,14 @@ DECLARE @ErrorMessage NVARCHAR(4000);
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteQuestion]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteQuestion]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Deletes a Question and its associated Schedule.
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_DeleteQuestion]
@@ -4462,15 +4730,14 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteStep]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteStep]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Deletes a Step.
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_DeleteStep]
@@ -4538,15 +4805,15 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_DeleteTo_Do]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_DeleteTo_Do]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+
+-- ALTER date: 2025-11-19
 -- Description: Deletes a To_Do and its associated Schedule, Note, and Files.
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_DeleteTo_Do]
@@ -4622,7 +4889,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetActivityByProjectID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetActivityByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4636,15 +4903,20 @@ BEGIN
     SET NOCOUNT ON;
 
     IF @ProjectID IS NULL BEGIN RAISERROR('ProjectID is required', 16, 1) RETURN END
-    IF NOT EXISTS (SELECT 1 FROM dbo.Projects WHERE ID = @ProjectID) BEGIN RAISERROR('Invalid ProjectID. Project does not exist.', 16, 1) RETURN END
+    IF NOT EXISTS (SELECT 1 FROM dbo.Projects WHERE ID = @ProjectID) 
+    BEGIN 
+        RAISERROR('Invalid ProjectID. Project does not exist.', 16, 1) 
+        RETURN 
+    END
 
-    SELECT * FROM VW_ActivityByProjectID 
-    WHERE ProjectID = 5
+    SELECT *, DATENAME(WEEKDAY ,PublishedAt) AS ActivityDay 
+    FROM VW_ActivityByProjectID 
+    WHERE ProjectID = @ProjectID
     ORDER BY PublishedAt DESC
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetAnswerByQuestionID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetAnswerByQuestionID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4665,14 +4937,14 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetAssignmentByMixedID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetAssignmentByElementID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- 19. Get Assignment By Mixed ID
-CREATE PROCEDURE [dbo].[SP_GetAssignmentByMixedID]
+CREATE PROCEDURE [dbo].[SP_GetAssignmentByElementID]
 @EventID INT = NULL,
 @To_DoID INT = NULL,
 @StepID INT = NULL,
@@ -4768,7 +5040,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetCardByCardID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetCardByCardID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4787,62 +5059,193 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetCardsByColumnID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetCardsByColumnID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SP_GetCardsByColumnID]
-@ColumnID INT
+    @ColumnID INT,
+    @MemberOrClient BIT
 AS 
 BEGIN
     SET NOCOUNT ON;
     IF @ColumnID IS NULL 
     BEGIN 
         RAISERROR('ColumnID is required', 16, 1) 
-    RETURN 
+        RETURN 
     END
     IF NOT EXISTS (SELECT 1 FROM dbo.Columns WHERE ID = @ColumnID) 
     BEGIN 
         RAISERROR('Invalid ColumnID. Column does not exist.', 16, 1) 
-    RETURN 
+        RETURN 
     END
 
-    SELECT * FROM VW_CardViewByColumnID 
-    WHERE @ColumnID = @ColumnID
-    ORDER BY PublishedAt DESC
+    IF @MemberOrClient = 1
+    BEGIN
+        SELECT * FROM VW_CardViewByColumnID 
+        WHERE ColumnID = @ColumnID
+        ORDER BY PublishedAt DESC
+    END
+    ELSE
+    BEGIN
+        SELECT * FROM VW_CardViewByColumnID 
+        WHERE ColumnID = @ColumnID AND IsPrivate = 0
+        ORDER BY PublishedAt DESC
+    END
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetChatByProjectID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetChatByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
 -- 9. Get Chat By ProjectID
 CREATE PROCEDURE [dbo].[SP_GetChatByProjectID]
-@ProjectID INT
+    @ProjectID INT,
+    @MemberOrClient BIT
 AS
 BEGIN
     SET NOCOUNT ON;
     IF @ProjectID IS NULL BEGIN RAISERROR('ProjectID is required', 16, 1) RETURN END
     IF NOT EXISTS (SELECT 1 FROM dbo.Projects WHERE ID = @ProjectID) BEGIN RAISERROR('Invalid ProjectID. Project does not exist.', 16, 1) RETURN END
 
-    SELECT * FROM VW_ChatViewByProjectID 
-    WHERE ProjectID = @ProjectID
-    ORDER BY PublishedAt DESC
+    IF @MemberOrClient = 1
+    BEGIN
+        SELECT * FROM VW_ChatViewByProjectID 
+        WHERE ProjectID = @ProjectID
+        ORDER BY PublishedAt DESC
+    END
+    ELSE
+    BEGIN
+        SELECT * FROM VW_ChatViewByProjectID 
+        WHERE ProjectID = @ProjectID AND IsPrivate = 0
+        ORDER BY PublishedAt DESC
+    END
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetCommentByNoteID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetClientByClientID]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[SP_GetClientByClientID]
+    @ClientID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @ErrorMessage NVARCHAR(4000);
+    DECLARE @ErrorSeverity INT;
+    DECLARE @ErrorState INT;
+
+   
+        
+    IF NOT EXISTS (SELECT 1 FROM Members WHERE ID = @ClientID)
+    BEGIN
+        RAISERROR('Member ID is invalid.', 16, 1);
+        RETURN;
+    END
+
+    BEGIN TRANSACTION
+        BEGIN TRY
+
+        SELECT * FROM VW_Client
+        WHERE ClientID = @ClientID
+
+            COMMIT TRANSACTION
+        END TRY
+
+        BEGIN CATCH
+            IF @@TRANCOUNT > 0
+                ROLLBACK TRANSACTION
+            
+            SELECT 
+                @ErrorMessage = ERROR_MESSAGE(),
+                @ErrorSeverity = ERROR_SEVERITY(),
+                @ErrorState = ERROR_STATE();
+            
+            RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+        
+        END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[SP_GetColumnByColumnID]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[SP_GetColumnByColumnID]
+    @ColumnID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF @ColumnID IS NULL 
+    BEGIN 
+    RAISERROR('ProjectID is required', 16, 1) 
+    RETURN 
+    END
+
+    IF NOT EXISTS (SELECT 1 FROM dbo.Columns WHERE ID = @ColumnID) 
+    BEGIN 
+    RAISERROR('Invalid ColumnID. Project does not exist.', 16, 1) RETURN END
+
+ 
+        SELECT * FROM VW_ColumnViewByColumnID 
+        WHERE ColumnID = @ColumnID
+  
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[SP_GetColumnByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[SP_GetColumnByProjectID]
+    @ProjectID INT,
+    @MemberOrClient BIT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF @ProjectID IS NULL 
+    BEGIN 
+    RAISERROR('ProjectID is required', 16, 1) 
+    RETURN 
+    END
+
+    IF NOT EXISTS (SELECT 1 FROM dbo.Projects WHERE ID = @ProjectID) 
+    BEGIN 
+    RAISERROR('Invalid ProjectID. Project does not exist.', 16, 1) RETURN END
+
+    IF @MemberOrClient = 1
+    BEGIN
+        SELECT * FROM VW_ColumnViewByProjectID 
+        WHERE ProjectID = @ProjectID
+        ORDER BY PublishedAt DESC
+        
+    END
+    ELSE
+    BEGIN
+        SELECT * FROM VW_ColumnViewByProjectID 
+        WHERE ProjectID = @ProjectID AND IsPrivate = 0
+        ORDER BY PublishedAt DESC
+    END
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[SP_GetCommentByElementID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- 20. Get Comment By NoteID
-CREATE PROCEDURE [dbo].[SP_GetCommentByNoteID]
+CREATE PROCEDURE [dbo].[SP_GetCommentByElementID]
 @EventID INT = NULL,
 @To_DoID INT = NULL,
 @StepID INT = NULL,
@@ -4961,7 +5364,41 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetDocumentByDocumentID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetCommentSubscribers]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Get Comment Subscribers by CommentID
+CREATE PROCEDURE [dbo].[SP_GetCommentSubscribers]
+    @CommentID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- 1. Validation: Check if CommentID is provided
+    IF @CommentID IS NULL 
+    BEGIN 
+        RAISERROR('CommentID is required', 16, 1) 
+        RETURN 
+    END
+
+    -- 2. Validation: Check if the Comment exists in the base table (assuming dbo.Comments)
+    IF NOT EXISTS (SELECT 1 FROM dbo.ProjectComments WHERE ID = @CommentID) 
+    BEGIN 
+        RAISERROR('Invalid CommentID. Comment does not exist.', 16, 1) 
+        RETURN 
+    END
+
+    
+        SELECT * FROM VW_GetCommentSubscripers 
+        WHERE CommentID = @CommentID 
+          
+  
+END
+GO
+/****** Object:  StoredProcedure [dbo].[SP_GetDocumentByDocumentID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4980,26 +5417,35 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetDocumentByProjectID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetDocumentByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
 -- 8. Get Document By ProjectID
 CREATE PROCEDURE [dbo].[SP_GetDocumentByProjectID]
-@ProjectID INT
+    @ProjectID INT,
+    @MemberOrClient BIT
 AS
 BEGIN
     SET NOCOUNT ON;
     IF @ProjectID IS NULL BEGIN RAISERROR('ProjectID is required', 16, 1) RETURN END
     IF NOT EXISTS (SELECT 1 FROM dbo.Projects WHERE ID = @ProjectID) BEGIN RAISERROR('Invalid ProjectID. Project does not exist.', 16, 1) RETURN END
 
-    SELECT * FROM VW_DocumentViewByProjectID WHERE ProjectID = @ProjectID
+    IF @MemberOrClient = 1
+    BEGIN
+        SELECT * FROM VW_DocumentViewByProjectID 
+        WHERE ProjectID = @ProjectID
+    END
+    ELSE
+    BEGIN
+        SELECT * FROM VW_DocumentViewByProjectID 
+        WHERE ProjectID = @ProjectID AND IsPrivate = 0
+    END
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetEventByEventID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetEventByEventID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5018,7 +5464,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetEventByProjectID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetEventByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5026,7 +5472,8 @@ GO
 
 -- 11. Get Event By ProjectID
 CREATE PROCEDURE [dbo].[SP_GetEventByProjectID]
-@ProjectID INT
+@ProjectID INT,
+@MemberOrClient BIT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -5041,33 +5488,146 @@ BEGIN
         RAISERROR('Invalid ProjectID. Project does not exist.', 16, 1) 
     RETURN 
     END
+    IF @MemberOrClient = 1
+    BEGIN
+        SELECT *
+        FROM VW_EventViewByProjectID 
+        WHERE ProjectID = @ProjectID
+    END
 
-    SELECT *
-    FROM VW_EventViewByProjectID 
-    WHERE ProjectID = @ProjectID
+    ELSE
+    BEGIN
+        -- Client Only See Public Events Where IsPrivate = 0
+        SELECT *
+        FROM VW_EventViewByProjectID 
+        WHERE ProjectID = @ProjectID AND IsPrivate = 0
+    END
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetFileByNoteID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetFilesByNoteID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
--- 18. Get File By NoteID
-CREATE PROCEDURE [dbo].[SP_GetFileByNoteID]
-@NoteID INT
-AS 
+CREATE PROCEDURE [dbo].[SP_GetFilesByNoteID]
+    @NoteID INT
+
+AS
 BEGIN
     SET NOCOUNT ON;
-    IF @NoteID IS NULL BEGIN RAISERROR('NoteID is required', 16, 1) RETURN END
-    IF NOT EXISTS (SELECT 1 FROM dbo.Notes WHERE ID = @NoteID) BEGIN RAISERROR('Invalid NoteID. Note does not exist.', 16, 1) RETURN END
+    IF @NoteID IS NULL 
+    BEGIN 
+        RAISERROR('NoteID is required', 16, 1) 
+        RETURN 
+    END
+    IF NOT EXISTS (SELECT 1 FROM dbo.Notes WHERE ID = @NoteID) 
+    BEGIN 
+        RAISERROR('Invalid NoteID. Note does not exist.', 16, 1) 
+        RETURN 
+    END
 
-    SELECT * FROM VW_FileViewByNoteID WHERE NoteID = @NoteID
+        SELECT * FROM VW_FileByNoteID 
+        WHERE NoteID = @NoteID
+   
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetListByListID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetInvitationsByInvitationID]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[SP_GetInvitationsByInvitationID]
+    @InvitationID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @ErrorMessage NVARCHAR(4000);
+    DECLARE @ErrorSeverity INT;
+    DECLARE @ErrorState INT;
+
+   
+        
+    IF NOT EXISTS (SELECT 1 FROM Invitations WHERE ID = @InvitationID)
+    BEGIN
+        RAISERROR('Project ID is invalid.', 16, 1);
+        RETURN;
+    END
+
+    BEGIN TRANSACTION
+        BEGIN TRY
+
+        SELECT * FROM VW_Invitation
+        WHERE InvitationID = @InvitationID
+
+            COMMIT TRANSACTION
+        END TRY
+
+        BEGIN CATCH
+            IF @@TRANCOUNT > 0
+                ROLLBACK TRANSACTION
+            
+            SELECT 
+                @ErrorMessage = ERROR_MESSAGE(),
+                @ErrorSeverity = ERROR_SEVERITY(),
+                @ErrorState = ERROR_STATE();
+            
+            RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+        
+        END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[SP_GetInvitationsByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[SP_GetInvitationsByProjectID]
+    @ProjectID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @ErrorMessage NVARCHAR(4000);
+    DECLARE @ErrorSeverity INT;
+    DECLARE @ErrorState INT;
+
+  
+        
+    IF NOT EXISTS (SELECT 1 FROM Projects WHERE ID = @ProjectID)
+    BEGIN
+        RAISERROR('Project ID is invalid.', 16, 1);
+        RETURN;
+    END
+
+    BEGIN TRANSACTION
+        BEGIN TRY
+
+        SELECT * FROM VW_InvitationProject
+        WHERE ProjectID = @ProjectID
+        ORDER BY PublishedAt DESC
+            COMMIT TRANSACTION
+        END TRY
+
+        BEGIN CATCH
+            IF @@TRANCOUNT > 0
+                ROLLBACK TRANSACTION
+            
+            SELECT 
+                @ErrorMessage = ERROR_MESSAGE(),
+                @ErrorSeverity = ERROR_SEVERITY(),
+                @ErrorState = ERROR_STATE();
+            
+            RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+        
+        END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[SP_GetListByListID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5086,26 +5646,35 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetListByProjectID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetListByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
 -- 4. Get List By ProjectID
 CREATE PROCEDURE [dbo].[SP_GetListByProjectID]
-@ProjectID INT
+    @ProjectID INT,
+    @MemberOrClient BIT
 AS
 BEGIN
     SET NOCOUNT ON;
     IF @ProjectID IS NULL BEGIN RAISERROR('ProjectID is required', 16, 1) RETURN END
     IF NOT EXISTS (SELECT 1 FROM dbo.Projects WHERE ID = @ProjectID) BEGIN RAISERROR('Invalid ProjectID. Project does not exist.', 16, 1) RETURN END
 
-    SELECT * FROM VW_ListViewByProjectID WHERE ProjectID = @ProjectID
+    IF @MemberOrClient = 1
+    BEGIN
+        SELECT * FROM VW_ListViewByProjectID 
+        WHERE ProjectID = @ProjectID
+    END
+    ELSE
+    BEGIN
+        SELECT * FROM VW_ListViewByProjectID 
+        WHERE ProjectID = @ProjectID AND IsPrivate = 0
+    END
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetMessageBoardByMessageID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetMessageBoardByMessageID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5123,47 +5692,65 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetMessageBoardByProjectID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetMessageBoardByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
 -- 2. Get MessageBoard By ProjectID
 CREATE PROCEDURE [dbo].[SP_GetMessageBoardByProjectID]
-@ProjectID INT
+    @ProjectID INT,
+    @MemberOrClient BIT
 AS
 BEGIN
     SET NOCOUNT ON;
     IF @ProjectID IS NULL BEGIN RAISERROR('ProjectID is required', 16, 1) RETURN END
     IF NOT EXISTS (SELECT 1 FROM dbo.Projects WHERE ID = @ProjectID) BEGIN RAISERROR('Invalid ProjectID. Project does not exist.', 16, 1) RETURN END
 
-    SELECT * FROM VW_MessageBoardByProjectID 
-    WHERE ProjectID = @ProjectID
-    ORDER BY PublishedAt DESC
+    IF @MemberOrClient = 1
+    BEGIN
+        SELECT * FROM VW_MessageBoardByProjectID 
+        WHERE ProjectID = @ProjectID
+        ORDER BY PublishedAt DESC
+    END
+    ELSE
+    BEGIN
+        SELECT * FROM VW_MessageBoardByProjectID 
+        WHERE ProjectID = @ProjectID AND IsPrivate = 0
+        ORDER BY PublishedAt DESC
+    END
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetQuestionByProjectID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetQuestionByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
 -- 13. Get Question By ProjectID
 CREATE PROCEDURE [dbo].[SP_GetQuestionByProjectID]
-@ProjectID INT
+    @ProjectID INT,
+    @MemberOrClient BIT
 AS
 BEGIN
     SET NOCOUNT ON;
     IF @ProjectID IS NULL BEGIN RAISERROR('ProjectID is required', 16, 1) RETURN END
     IF NOT EXISTS (SELECT 1 FROM dbo.Projects WHERE ID = @ProjectID) BEGIN RAISERROR('Invalid ProjectID. Project does not exist.', 16, 1) RETURN END
 
-    SELECT * FROM VW_QuestionViewByProjectID WHERE ProjectID = @ProjectID
+    IF @MemberOrClient = 1
+    BEGIN
+        SELECT * FROM VW_QuestionViewByProjectID 
+        WHERE ProjectID = @ProjectID
+    END
+    ELSE
+    BEGIN
+        SELECT * FROM VW_QuestionViewByProjectID 
+        WHERE ProjectID = @ProjectID AND IsPrivate = 0
+    END
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetQuestionByQuestionID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetQuestionByQuestionID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5182,7 +5769,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetStepByCardID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetStepByCardID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5197,11 +5784,104 @@ BEGIN
     IF @CardID IS NULL BEGIN RAISERROR('CardID is required', 16, 1) RETURN END
     IF NOT EXISTS (SELECT 1 FROM dbo.Cards WHERE ID = @CardID) BEGIN RAISERROR('Invalid CardID. Card does not exist.', 16, 1) RETURN END
 
-    SELECT * FROM VW_StepViewByCardID WHERE CardID = @CardID
+    SELECT * FROM VW_StepViewByCardID 
+    WHERE CardID = @CardID
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetToDoByListID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetTeamMemberByMemberID]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[SP_GetTeamMemberByMemberID]
+    @MemberID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @ErrorMessage NVARCHAR(4000);
+    DECLARE @ErrorSeverity INT;
+    DECLARE @ErrorState INT;
+
+   
+        
+    IF NOT EXISTS (SELECT 1 FROM Members WHERE ID = @MemberID)
+    BEGIN
+        RAISERROR('Member ID is invalid.', 16, 1);
+        RETURN;
+    END
+
+    BEGIN TRANSACTION
+        BEGIN TRY
+
+        SELECT * FROM VW_Member
+        WHERE MemberID = @MemberID
+
+            COMMIT TRANSACTION
+        END TRY
+
+        BEGIN CATCH
+            IF @@TRANCOUNT > 0
+                ROLLBACK TRANSACTION
+            
+            SELECT 
+                @ErrorMessage = ERROR_MESSAGE(),
+                @ErrorSeverity = ERROR_SEVERITY(),
+                @ErrorState = ERROR_STATE();
+            
+            RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+        
+        END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[SP_GetTeamMembersByProjectID]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[SP_GetTeamMembersByProjectID]
+    @ProjectID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @ErrorMessage NVARCHAR(4000);
+    DECLARE @ErrorSeverity INT;
+    DECLARE @ErrorState INT;
+
+  
+        
+    IF NOT EXISTS (SELECT 1 FROM Projects WHERE ID = @ProjectID)
+    BEGIN
+        RAISERROR('Project ID is invalid.', 16, 1);
+        RETURN;
+    END
+
+    BEGIN TRANSACTION
+        BEGIN TRY
+
+        SELECT * FROM VW_MemberProject
+        WHERE ProjectID = @ProjectID
+        
+            COMMIT TRANSACTION
+        END TRY
+
+        BEGIN CATCH
+            IF @@TRANCOUNT > 0
+                ROLLBACK TRANSACTION
+            
+            SELECT 
+                @ErrorMessage = ERROR_MESSAGE(),
+                @ErrorSeverity = ERROR_SEVERITY(),
+                @ErrorState = ERROR_STATE();
+            
+            RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+        
+        END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[SP_GetToDoByListID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5209,18 +5889,31 @@ GO
 
 -- 6. Get ToDo By ListID
 CREATE PROCEDURE [dbo].[SP_GetToDoByListID]
-@ListID INT
+@ListID INT,
+@IsClient BIT
 AS
 BEGIN
     SET NOCOUNT ON;
     IF @ListID IS NULL BEGIN RAISERROR('ListID is required', 16, 1) RETURN END
     IF NOT EXISTS (SELECT 1 FROM dbo.Lists WHERE ID = @ListID) BEGIN RAISERROR('Invalid ListID. List does not exist.', 16, 1) RETURN END
 
-    SELECT * FROM VW_ToDoViewByListID WHERE ListID = @ListID
+    IF @IsClient = 1
+    BEGIN
+        SELECT * FROM VW_ToDoViewByListID 
+        WHERE ListID = @ListID
+    END
+
+    ELSE
+    BEGIN
+        SELECT * FROM VW_ToDoViewByListID 
+        WHERE ListID = @ListID AND IsPrivate = 0
+    END
+
+   
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_GetToDoByToDoID]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_GetToDoByToDoID]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5239,24 +5932,21 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateAnswer]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateAnswer]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Update Answer - allows updating answer text and files (NOT MemberID, ProjectID, or QuestionID)
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_UpdateAnswer]
 
     @AnswerID INT,
     @AnswerText NVARCHAR(2000) = NULL,
-    @URLLink NVARCHAR(4000) = NULL,
-    @FilePath NVARCHAR(2000) = NULL,
-    @Caption NVARCHAR(200) = NULL
+    @URLLink NVARCHAR(4000) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -5266,6 +5956,10 @@ BEGIN
     DECLARE @ErrorState INT;
     
     DECLARE @NoteID INT;
+    DECLARE @ProjectID INT;
+    DECLARE @QusID INT;
+
+
     
     BEGIN TRY
         BEGIN TRANSACTION;
@@ -5281,25 +5975,19 @@ BEGIN
             RAISERROR('Invalid AnswerID. Answer does not exist.', 16, 1);
         END
         
-        SELECT @NoteID = AnswerID FROM Answers
+        SELECT @NoteID = AnswerID
+        FROM Answers
         WHERE ID = @AnswerID
         
-       
-        
+
         UPDATE Notes
         SET 
-            Text = @AnswerText,
-            URLLink = @URLLink
+           Text = @AnswerText,
+           URLLink = @URLLink
+           WHERE ID = @NoteID
 
-        WHERE ID = @NoteID;
 
-        UPDATE Files
-        SET 
-            FilePath = @FilePath,
-            Caption = @Caption
-
-        WHERE NoteID = @NoteID
-        
+      
         COMMIT TRANSACTION;
             
     END TRY
@@ -5317,7 +6005,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateCard]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateCard]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5325,8 +6013,7 @@ GO
 
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Update Card - allows updating Dates, Private, and Notes/Files (NOT MemberID, ProjectID, or ColumnID)
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_UpdateCard]
@@ -5336,8 +6023,7 @@ CREATE PROCEDURE [dbo].[SP_UpdateCard]
     @ToDate DATETIME = NULL,
     @NoteText NVARCHAR(2000) = NULL,
     @NoteURLLink NVARCHAR(4000) = NULL,
-    @FilePath NVARCHAR(2000) = NULL,
-    @FileCaption NVARCHAR(200) = NULL
+    @IsPrivate BIT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -5350,7 +6036,8 @@ BEGIN
     DECLARE @NewNoteID INT = NULL;
     DECLARE @ScheduleID INT;
     DECLARE @ProjectID INT;
-    DECLARE @PublishingInfoID INT;
+    DECLARE @PublisherID INT;
+    DECLARE @PubInfoID INT;    
     
     BEGIN TRY
         BEGIN TRANSACTION;
@@ -5367,10 +6054,14 @@ BEGIN
             RAISERROR('Invalid CardID. Card does not exist.', 16, 1);
         END
         
-        SELECT @ExistingNoteID = NoteID, @ScheduleID = ScheduleID, @PublishingInfoID = PublishingInfoID
+        SELECT @ExistingNoteID = NoteID, @ScheduleID = ScheduleID
         FROM dbo.Cards
         WHERE ID = @CardID;
         
+         SELECT @PublisherID = PublisherID 
+         FROM PublishingInformation 
+         WHERE ID = 
+         (SELECT PublishingInfoID FROM Cards WHERE ID = @CardID)
 
         SELECT @ProjectID = Col.ProjectID FROM Cards 
         INNER JOIN
@@ -5385,8 +6076,8 @@ BEGIN
             WHERE ID = @ScheduleID;
         END
 
-        ELSE
-        BEGIN
+        ELSE IF @FromDate IS NOT NULL AND @ToDate IS NOT NULL
+        BEGIN 
             INSERT INTO Schedules(FromDate,ToDate, ProjectID)
             VALUES (@FromDate, @ToDate, @ProjectID)
 
@@ -5395,26 +6086,43 @@ BEGIN
             UPDATE  Cards
             SET 
                 ScheduleID = @NewScheduleID
+            WHERE ID = @CardID
         END
         
-        IF (SELECT NoteID FROM Cards WHERE ID = @CardID) IS NULL AND @NoteText IS NOT NULL OR @FilePath IS NOT NULL
+        IF EXISTS (SELECT NoteID FROM Cards WHERE ID = @CardID) AND (@NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL)
         BEGIN
+            UPDATE Notes
+            SET 
+                Text = @NoteText,
+                URLLink = @NoteURLLink
+            WHERE ID = @ExistingNoteID;
+        END
+
+        ELSE IF NOT EXISTS (SELECT NoteID FROM Cards WHERE ID = @CardID) AND (@NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL)
+        BEGIN
+
+            INSERT INTO PublishingInformation(PublisherID)
+            VALUES (@PublisherID)
+
+            SET @PubInfoID = SCOPE_IDENTITY();
+
             INSERT INTO dbo.Notes (Text, URLLink, PublishingInfoID, ProjectID)
-            VALUES (@NoteText, @NoteURLLink, @PublishingInfoID, @ProjectID);
-            
+            VALUES (@NoteText, @NoteURLLink, @PubInfoID, @ProjectID);
+
             SET @NewNoteID = SCOPE_IDENTITY();
+
+            UPDATE dbo.Cards
+            SET 
+                
+                NoteID = @NewNoteID
             
-            IF @FilePath IS NOT NULL AND @NewNoteID IS NOT NULL
-            BEGIN
-                INSERT INTO dbo.Files (FilePath, Caption, NoteID)
-                VALUES (@FilePath, @FileCaption, @NewNoteID);
-            END
+            WHERE ID = @CardID;
         END
         
         UPDATE dbo.Cards
-        SET 
-            Title = @Title,
-            NoteID = ISNULL(@NewNoteID, @ExistingNoteID)
+            SET 
+                Title = @Title,
+                IsPrivate = @IsPrivate
             
             WHERE ID = @CardID;
         
@@ -5433,7 +6141,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateChat]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateChat]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5441,8 +6149,7 @@ GO
 
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Update Chat - allows updating Text and Private (NOT MemberID or ProjectID)
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_UpdateChat]
@@ -5472,9 +6179,13 @@ BEGIN
 
             UPDATE Chats
             SET 
-                Text = @Text,
+                Text = @Text
+            WHERE ID = @ChatID 
+
+            UPDATE Chats
+            SET 
                 IsPrivate = @IsPrivate
-            WHERE ID = @ChatID
+            WHERE ProjectID = (SELECT ProjectID FROM Chats WHERE ID = @ChatID)
     
             COMMIT TRANSACTION
         END TRY
@@ -5493,7 +6204,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateColumn]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateColumn]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5501,8 +6212,7 @@ GO
 
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Update Column - allows updating Title, Description, and Private (NOT MemberID or ProjectID)
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_UpdateColumn]
@@ -5556,7 +6266,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateComment]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateComment]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5567,10 +6277,7 @@ GO
 
 
 -- =============================================
-
--- Author:      Basecamp Database Team
-
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 
 -- Description: Update Comment - allows updating comment text and files (NOT MemberID, ProjectID, or linked element IDs)
 
@@ -5582,14 +6289,7 @@ CREATE PROCEDURE [dbo].[SP_UpdateComment]
 
     @NoteText NVARCHAR(2000) = NULL,
 
-    @URLLink NVARCHAR(4000) = NULL,
-
-    @FileID INT = NULL,
-
-    @FilePath NVARCHAR(2000) = NULL,
-
-    @Caption NVARCHAR(200) = NULL -- Best practice to allow NULL default
-
+    @URLLink NVARCHAR(4000) = NULL
 AS
 
 BEGIN
@@ -5614,7 +6314,7 @@ BEGIN
 
         
 
-        -- 1. Check if RequiredIDs are provided
+        --  Check if RequiredIDs are provided
 
         IF @CommentID IS NULL
 
@@ -5637,51 +6337,12 @@ BEGIN
         END
 
 
-        -- 2. Fetch the NoteID once at the start. 
+        --  Fetch the NoteID once at the start. 
 
         SELECT @NoteID = NoteID FROM dbo.ProjectComments WHERE ID = @CommentID;
 
 
-        -- 3. Logic to update, insert, or remove the associated file
-
-        IF @FilePath IS NOT NULL
-
-        BEGIN
-            
-
-            IF EXISTS (SELECT 1 FROM Files WHERE NoteID = @NoteID)
-
-            BEGIN
-
-                UPDATE Files
-
-                SET
-
-                    FilePath = @FilePath, 
-
-                    Caption = @Caption
-
-                WHERE ID = @FileID;
-
-            END
-
-            ELSE
-
-            BEGIN
-
-                INSERT INTO Files (NoteID, Caption, FilePath)
-
-                VALUES (@NoteID, @Caption, @FilePath);
-
-            END
-
-        END
-
-       
-
-
-
-        -- 4. Update the Notes table
+        -- Update the Notes table
 
         UPDATE Notes
 
@@ -5723,7 +6384,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateDocument]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateDocument]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5731,8 +6392,7 @@ GO
 
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Update Document - allows updating Name, FilePath, Private, and Notes/Files (NOT MemberID or ProjectID)
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_UpdateDocument]
@@ -5741,8 +6401,6 @@ CREATE PROCEDURE [dbo].[SP_UpdateDocument]
     @FilePath NVARCHAR(4000) = NULL,
     @NoteText NVARCHAR(2000) = NULL,
     @NoteURLLink NVARCHAR(4000) = NULL,
-    @AttachmentFilePath NVARCHAR(2000) = NULL,
-    @AttachmentFileCaption NVARCHAR(200) = NULL,
     @IsPrivate BIT = NULL
 AS
 BEGIN
@@ -5755,8 +6413,9 @@ BEGIN
     DECLARE @ExistingNoteID INT = NULL;
     DECLARE @NewNoteID INT = NULL;
     DECLARE @ProjectID INT;
-    DECLARE @PublishingInfoID INT;
-    
+    DECLARE @PublisherID INT;
+    DECLARE @PubInfoID INT;    
+
     BEGIN TRY
         BEGIN TRANSACTION;
         
@@ -5771,30 +6430,53 @@ BEGIN
         BEGIN
             RAISERROR('Invalid DocumentID. Document does not exist.', 16, 1);
         END
-        
-        SELECT @ExistingNoteID = NoteID, @ProjectID = ProjectID, @PublishingInfoID = PublishingInfoID
+
+
+         SELECT  @PublisherID = PublisherID 
+         FROM PublishingInformation 
+         WHERE ID = 
+         (SELECT PublishingInfoID FROM Documents WHERE ID = @DocumentID)
+
+
+        SELECT @ExistingNoteID = NoteID, @ProjectID = ProjectID
         FROM dbo.Documents
         WHERE ID = @DocumentID;
         
-        IF (SELECT NoteID FROM Documents WHERE ID = @DocumentID ) IS NULL AND @NoteText IS NOT NULL OR @AttachmentFilePath IS NOT NULL
+         IF EXISTS (SELECT NoteID FROM Documents WHERE ID = @DocumentID) AND (@NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL)
         BEGIN
+            UPDATE Notes
+            SET 
+                Text = @NoteText,
+                URLLink = @NoteURLLink
+            WHERE ID = @ExistingNoteID;
+        END
+
+        ELSE IF NOT EXISTS (SELECT NoteID FROM Documents WHERE ID = @DocumentID) AND (@NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL)
+        BEGIN
+
+            
+             INSERT INTO PublishingInformation(PublisherID)
+            VALUES (@PublisherID)
+
+            SET @PubInfoID = SCOPE_IDENTITY();
+
             INSERT INTO dbo.Notes (Text, URLLink, PublishingInfoID, ProjectID)
-            VALUES (@NoteText, @NoteURLLink, @PublishingInfoID, @ProjectID);
-            
+            VALUES (@NoteText, @NoteURLLink, @PubInfoID, @ProjectID);
+
             SET @NewNoteID = SCOPE_IDENTITY();
+
+            UPDATE dbo.Documents
+            SET 
+                
+                NoteID = @NewNoteID
             
-            IF @AttachmentFilePath IS NOT NULL AND @NewNoteID IS NOT NULL
-            BEGIN
-                INSERT INTO dbo.Files (FilePath, Caption, NoteID)
-                VALUES (@AttachmentFilePath, @AttachmentFileCaption, @NewNoteID);
-            END
+            WHERE ID = @DocumentID;
         END
         
         UPDATE dbo.Documents
         SET 
-            Name = @Name,
+            dbo.Documents.Name = @Name,
             FilePath = @FilePath,
-            NoteID = ISNULL(@NewNoteID, @ExistingNoteID),
             IsPrivate = @IsPrivate
         WHERE ID = @DocumentID;
         
@@ -5814,7 +6496,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateEvent]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateEvent]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5827,8 +6509,6 @@ CREATE PROCEDURE [dbo].[SP_UpdateEvent]
     @URLLink NVARCHAR(500) = NULL,
     @NoteText NVARCHAR(2000) = NULL,
     @NoteURLLink NVARCHAR(4000) = NULL,
-    @FilePath NVARCHAR(2000) = NULL,
-    @FileCaption NVARCHAR(200) = NULL,
     @IsPrivate BIT
 AS
 BEGIN
@@ -5842,7 +6522,8 @@ BEGIN
     DECLARE @ScheduleID INT;
     DECLARE @NewNoteID INT = NULL;
     DECLARE @ProjectID INT;
-    DECLARE @PublishingInfoID INT;
+    DECLARE @PublisherID INT;
+    DECLARE @PubInfoID INT;
     
     BEGIN TRY
         BEGIN TRANSACTION;
@@ -5863,11 +6544,15 @@ BEGIN
             RAISERROR('Start/End date are required.', 16, 1);
         END
         
+        SELECT @PublisherID = PublisherID 
+         FROM PublishingInformation 
+         WHERE ID = 
+         (SELECT PublishingInfoID FROM Events WHERE ID = @EventID)
+
         -- Pulling existing data and verifying existence
         SELECT @ExistingNoteID = NoteID, 
                @ScheduleID = ScheduleID,
-               @ProjectID = ProjectID, 
-               @PublishingInfoID = PublishingInfoID
+               @ProjectID = ProjectID
         FROM dbo.Events
         WHERE ID = @EventID;
 
@@ -5879,19 +6564,34 @@ BEGIN
             ToDate = @ToDate
         WHERE ID = @ScheduleID;
         
-        -- Note/File Logic: Only run if text or file is provided AND no note exists yet
-        IF @ExistingNoteID IS NULL AND (@NoteText IS NOT NULL OR @FilePath IS NOT NULL)
+       IF EXISTS (SELECT NoteID FROM Events WHERE ID = @EventID) AND (@NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL)
         BEGIN
+            UPDATE Notes
+            SET 
+                Text = @NoteText,
+                URLLink = @NoteURLLink
+            WHERE ID = @ExistingNoteID;
+        END
+
+        ELSE IF NOT EXISTS (SELECT NoteID FROM Events WHERE ID = @EventID) AND (@NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL)
+        BEGIN
+
+             INSERT INTO PublishingInformation(PublisherID)
+            VALUES (@PublisherID)
+
+            SET @PubInfoID = SCOPE_IDENTITY();
+
             INSERT INTO dbo.Notes (Text, URLLink, PublishingInfoID, ProjectID)
-            VALUES (@NoteText, @NoteURLLink, @PublishingInfoID, @ProjectID);
-            
+            VALUES (@NoteText, @NoteURLLink, @PubInfoID, @ProjectID);
+
             SET @NewNoteID = SCOPE_IDENTITY();
+
+            UPDATE dbo.Events
+            SET 
+                
+                NoteID = @NewNoteID
             
-            IF @FilePath IS NOT NULL AND @NewNoteID IS NOT NULL
-            BEGIN
-                INSERT INTO dbo.Files (FilePath, Caption, NoteID)
-                VALUES (@FilePath, @FileCaption, @NewNoteID);
-            END
+            WHERE ID = @EventID;
         END
         
         
@@ -5919,7 +6619,67 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateInvitation]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateFileInNote]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[SP_UpdateFileInNote]
+@FileID INT,
+@FilePath NVARCHAR(MAX),
+@FileCaption NVARCHAR(100)
+
+AS 
+BEGIN
+
+SET NOCOUNT ON;
+
+	DECLARE @ErrorMessage VARCHAR(4000);
+	DECLARE @ErrorSeverity INT;
+	DECLARE @ErrorState INT;
+
+	BEGIN TRY
+		BEGIN TRANSACTION;
+
+		IF @FileID IS NULL
+		BEGIN
+			RAISERROR('FileID is required!', 16, 1)
+		END
+
+		IF (SELECT ID FROM Files WHERE ID = @FileID) IS NULL
+		BEGIN
+			RAISERROR('File does not exist!', 16, 1)
+		END
+
+		IF @FileCaption IS NOT NULL AND @FilePath IS NOT NULL
+		BEGIN
+			UPDATE Files
+			SET
+				FilePath = @FilePath,
+				Caption = @FileCaption
+			WHERE ID = @FileID;
+		END
+
+
+
+		COMMIT TRANSACTION;
+	END TRY
+
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0
+			ROLLBACK TRANSACTION;
+
+		SELECT @ErrorMessage = ERROR_MESSAGE(),
+			   @ErrorSeverity = ERROR_SEVERITY(),
+			   @ErrorState = ERROR_STATE()
+
+		RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState)
+
+	END CATCH
+
+END
+GO
+/****** Object:  StoredProcedure [dbo].[SP_UpdateInvitation]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5974,15 +6734,14 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateList]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateList]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Update List - allows updating Title, Private, and Notes/Files (NOT MemberID or ProjectID)
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_UpdateList]
@@ -5990,8 +6749,6 @@ CREATE PROCEDURE [dbo].[SP_UpdateList]
     @Title NVARCHAR(50),
     @NoteText NVARCHAR(2000) = NULL,
     @URLLink NVARCHAR(2000) = NULL,
-    @FilePath NVARCHAR(MAX) = NULL,
-    @Caption NVARCHAR(2000) = NULL,
     @IsPrivate BIT
 AS
 BEGIN
@@ -6004,8 +6761,9 @@ BEGIN
     DECLARE @ExistingNoteID INT = NULL;
     DECLARE @NewNoteID INT = NULL;
     DECLARE @ProjectID INT;
-    DECLARE @PublishingInfoID INT;
-    
+    DECLARE @PublisherID INT;
+    DECLARE @PubInfoID INT;
+
     BEGIN TRANSACTION
         
         BEGIN TRY
@@ -6019,29 +6777,49 @@ BEGIN
         BEGIN
             RAISERROR('Invalid ListID. List does not exist.', 16, 1);
         END
-        
-        SELECT @ExistingNoteID = NoteID, @ProjectID = ProjectID, @PublishingInfoID = PublishingInfoID
+
+
+        SELECT @PublisherID = PublisherID 
+         FROM PublishingInformation 
+         WHERE ID = 
+         (SELECT PublishingInfoID FROM Lists WHERE ID = @ListID)
+
+
+        SELECT @ExistingNoteID = NoteID, @ProjectID = ProjectID
         FROM dbo.Lists
         WHERE ID = @ListID;
         
-        IF (SELECT NoteID FROM Lists WHERE ID = @ListID ) IS NULL AND @NoteText IS NOT NULL OR @FilePath IS NOT NULL
+        IF EXISTS (SELECT NoteID FROM Lists WHERE ID = @ListID) AND (@NoteText IS NOT NULL OR @URLLink IS NOT NULL)
         BEGIN
+            UPDATE Notes
+            SET 
+                Text = @NoteText,
+                URLLink = @URLLink
+            WHERE ID = @ExistingNoteID;
+        END
+
+        ELSE IF NOT EXISTS (SELECT NoteID FROM Lists WHERE ID = @ListID) AND (@NoteText IS NOT NULL OR @URLLink IS NOT NULL)
+        BEGIN
+
+            INSERT INTO PublishingInformation(PublisherID)
+            VALUES (@PublisherID)
+
+            SET @PubInfoID = SCOPE_IDENTITY();
+
             INSERT INTO dbo.Notes (Text, URLLink, PublishingInfoID, ProjectID)
-            VALUES (@NoteText, @URLLink, @PublishingInfoID, @ProjectID);
-            
+            VALUES (@NoteText, @URLLink, @PubInfoID, @ProjectID);
+
             SET @NewNoteID = SCOPE_IDENTITY();
-            
-            IF @FilePath IS NOT NULL AND @NewNoteID IS NOT NULL
-            BEGIN
-                INSERT INTO dbo.Files (FilePath, Caption, NoteID)
-                VALUES (@FilePath, @Caption, @NewNoteID);
-            END
+
+            UPDATE dbo.Lists
+            SET 
+                NoteID = @NewNoteID
+            WHERE ID = @ListID;
         END
 
         UPDATE Lists
         SET 
             Title = @Title,
-            NoteID = ISNULL(@NewNoteID, @ExistingNoteID),
             IsPrivate = @IsPrivate
         WHERE ID = @ListID
 
@@ -6063,25 +6841,71 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateMessageInBoard]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateMember]    Script Date: 2/3/2026 12:28:17 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[SP_UpdateMember]
+    @MemberID INT,             
+    @JobTitle NVARCHAR(50) = NULL,
+    @CompanyName NVARCHAR(150) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @UserID INT;
+
+    -- 1. Identify the UserID associated with this MemberID
+    SELECT @UserID = UserID FROM Members WHERE ID = @MemberID;
+
+    IF @UserID IS NULL
+    BEGIN
+        RAISERROR('Member not found.', 16, 1);
+        RETURN;
+    END
+
+    
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- 2. Update the Users table
+        UPDATE Users
+        SET 
+            JobTitle = @JobTitle,
+            CompanyName = @CompanyName
+        WHERE ID = @UserID;
+
+       
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+
+        DECLARE @ErrMsg NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrMsg, 16, 1);
+    END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[SP_UpdateMessageInBoard]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-12-22
+-- ALTER date: 2025-12-22
 -- Description: Updates a message board entry, its associated note, and handles file attachments.
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_UpdateMessageInBoard]
-    @MessageBoardID INT,
+    @MessagID INT,
     @Title NVARCHAR(50),
     @NoteText NVARCHAR(2000) = NULL,
     @NoteURLLink NVARCHAR(4000) = NULL,
-    @FileID INT = NULL,
-    @FilePath NVARCHAR(2000) = NULL,
-    @FileCaption NVARCHAR(200) = NULL,
     @IsPrivate BIT
 AS
 BEGIN
@@ -6090,64 +6914,71 @@ BEGIN
     DECLARE @ErrorMessage NVARCHAR(4000);
     DECLARE @ErrorSeverity INT;
     DECLARE @ErrorState INT;
-    DECLARE @NoteID INT;
+
+    DECLARE @ExistingNoteID INT = NULL;
+    DECLARE @NewNoteID INT = NULL;
+    DECLARE @ProjectID INT;
+    DECLARE @PublisherID INT;
+    DECLARE @PubInfoID INT;
+
+
 
     BEGIN TRY
         BEGIN TRANSACTION;
 
         -- 1. Validation: Check if required MessageBoardID is provided
-        IF @MessageBoardID IS NULL
+        IF @MessagID IS NULL
         BEGIN
             RAISERROR('MessageBoardID is required.', 16, 1);
         END
 
        
 
-        
+         SELECT @PublisherID = PublisherID 
+         FROM PublishingInformation 
+         WHERE ID = 
+         (SELECT PublishingInfoID FROM MessageBoards WHERE ID = @MessagID)
 
-         SELECT @NoteID = NoteID 
+         SELECT @ExistingNoteID = NoteID ,@ProjectID = ProjectID
         FROM dbo.MessageBoards 
-        WHERE ID = @MessageBoardID;
+        WHERE ID = @MessagID;
 
-         
-        -- 3. Update the associated Note
-        UPDATE dbo.Notes
-        SET
-            Text = @NoteText,
-            URLLink = @NoteURLLink
-        WHERE ID = @NoteID;
-
-        -- 4. Logic to update, insert, or remove the associated file
-        IF @FilePath IS NOT NULL
+        IF EXISTS (SELECT NoteID FROM MessageBoards WHERE ID = @MessagID) AND (@NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL)
         BEGIN
-            -- If a file already exists for this note, update it.
-            IF EXISTS (SELECT 1 FROM dbo.Files WHERE ID = @FileID)
-            BEGIN
-                UPDATE dbo.Files
-                SET
-                    FilePath = @FilePath,
-                    Caption = @FileCaption
-                WHERE ID = @FileID;
-            END
-            -- Otherwise, create a new file entry
-            ELSE
-            BEGIN
-                INSERT INTO dbo.Files (NoteID, Caption, FilePath)
-                VALUES (@NoteID, @FileCaption, @FilePath);
-            END
-        END
-        ELSE
-        BEGIN
-            -- If @FilePath is NULL, remove any existing file associated with the note
-            DELETE FROM dbo.Files WHERE ID = @FileID;
+            UPDATE Notes
+            SET 
+                Text = @NoteText,
+                URLLink = @NoteURLLink
+            WHERE ID = @ExistingNoteID;
         END
 
-        -- 5. Update the Message Board entry itself
+        ELSE IF NOT EXISTS (SELECT NoteID FROM MessageBoards WHERE ID = @MessagID) AND (@NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL)
+        BEGIN
+            
+            INSERT INTO PublishingInformation(PublisherID)
+            VALUES (@PublisherID)
+
+            SET @PubInfoID = SCOPE_IDENTITY();
+
+             
+            INSERT INTO dbo.Notes (Text, URLLink, PublishingInfoID, ProjectID)
+            VALUES (@NoteText, @NoteURLLink, @PubInfoID, @ProjectID);
+
+            SET @NewNoteID = SCOPE_IDENTITY();
+
+            UPDATE dbo.Lists
+            SET 
+                NoteID = @NewNoteID
+            WHERE ID = @MessagID;
+        END
+
+
+        --  Update the Message Board entry itself
         UPDATE dbo.MessageBoards
         SET 
             Title = @Title,
             IsPrivate = @IsPrivate
-        WHERE ID = @MessageBoardID;
+        WHERE ID = @MessagID;
 
         COMMIT TRANSACTION;
 
@@ -6167,7 +6998,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateProject]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateProject]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6227,7 +7058,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateQuestion]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateQuestion]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6235,8 +7066,7 @@ GO
 
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Update Question - allows updating Text, Dates, and IsChecked (NOT MemberID or ProjectID)
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_UpdateQuestion]
@@ -6299,7 +7129,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateStep]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateStep]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6307,8 +7137,7 @@ GO
 
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Update Step - allows updating Text and IsChecked (NOT MemberID, ProjectID, or CardID)
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_UpdateStep]
@@ -6359,7 +7188,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SP_UpdateTo_Do]    Script Date: 1/12/2026 11:40:22 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_UpdateTo_Do]    Script Date: 2/3/2026 12:28:17 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6367,8 +7196,7 @@ GO
 
 
 -- =============================================
--- Author:      Basecamp Database Team
--- Create date: 2025-11-19
+-- ALTER date: 2025-11-19
 -- Description: Update To_Do - allows updating Text and Notes/Files (NOT MemberID, ProjectID, or ListID)
 -- =============================================
 CREATE PROCEDURE [dbo].[SP_UpdateTo_Do]
@@ -6376,8 +7204,6 @@ CREATE PROCEDURE [dbo].[SP_UpdateTo_Do]
     @Text NVARCHAR(500),
     @NoteText NVARCHAR(2000) = NULL,
     @NoteURLLink NVARCHAR(4000) = NULL,
-    @FilePath NVARCHAR(2000) = NULL,
-    @FileCaption NVARCHAR(200) = NULL,
     @FromDate DATETIME,
     @ToDate DATETIME,
     @IsPrivate BIT,
@@ -6392,10 +7218,14 @@ BEGIN
     
     DECLARE @ExistingNoteID INT = NULL;
     DECLARE @NewNoteID INT = NULL;
-    DECLARE @PublishingInfoID INT;
+    DECLARE @ListID INT;
+    DECLARE @PublisherID INT;
+    DECLARE @NewPubInfoID INT;
     DECLARE @ScheduleID INT;
     DECLARE @ProjectID INT;
-    
+    DECLARE @PubInfoID INT;
+
+
     BEGIN TRY
         BEGIN TRANSACTION;
         
@@ -6416,44 +7246,66 @@ BEGIN
 
        
         
-        SELECT @ExistingNoteID = NoteID, @PublishingInfoID = PublishingInfoID
+        SELECT @ExistingNoteID = NoteID, @ListID = ListID
         FROM dbo.To_Dos
         WHERE ID = @To_DoID;
-        
+
+
+        SELECT @PublisherID = PublisherID 
+        FROM PublishingInformation 
+        WHERE ID = (SELECT PublishingInfoID FROM To_Dos WHERE ID = @To_DoID)
+
         SELECT @ProjectID = ProjectID
-        FROM dbo.PublishingInformation
-        WHERE ID = @PublishingInfoID;
+        FROM dbo.Lists
+        WHERE ID = @ListID;
         
-        IF (SELECT NoteID FROM To_Dos WHERE ID = @To_DoID) IS NULL AND @NoteText IS NOT NULL OR @FilePath IS NOT NULL
+        IF EXISTS (SELECT NoteID FROM To_Dos WHERE ID = @To_DoID) AND (@NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL)
         BEGIN
+            UPDATE Notes
+            SET 
+                Text = @NoteText,
+                URLLink = @NoteURLLink
+            WHERE ID = @ExistingNoteID;
+        END
+
+        ELSE IF NOT EXISTS (SELECT NoteID FROM To_Dos WHERE ID = @To_DoID) AND (@NoteText IS NOT NULL OR @NoteURLLink IS NOT NULL)
+        BEGIN
+            
+            INSERT INTO PublishingInformation(PublisherID)
+            VALUES (@PublisherID)
+
+            SET @PubInfoID = SCOPE_IDENTITY();
+
+             
             INSERT INTO dbo.Notes (Text, URLLink, PublishingInfoID, ProjectID)
-            VALUES (@NoteText, @NoteURLLink, @PublishingInfoID, @ProjectID);
-            
+            VALUES (@NoteText, @NoteURLLink, @PubInfoID, @ProjectID);
+
             SET @NewNoteID = SCOPE_IDENTITY();
-            
-            IF @FilePath IS NOT NULL AND @NewNoteID IS NOT NULL
-            BEGIN
-                INSERT INTO dbo.Files (FilePath, Caption, NoteID)
-                VALUES (@FilePath, @FileCaption, @NewNoteID);
-            END
+
+            UPDATE dbo.Lists
+            SET 
+                NoteID = @NewNoteID
+            WHERE ID = @To_DoID;
         END
 
         SELECT @ScheduleID = ScheduleID
         FROM To_Dos 
         WHERE ID = @To_DoID
 
-        UPDATE Schedules 
-        SET 
-            FromDate = @FromDate,
-            ToDate = @ToDate    
-        WHERE ID = @ScheduleID
+        IF EXISTS (SELECT ID FROM Schedules WHERE ID = @ScheduleID)
+        BEGIN
+            UPDATE Schedules 
+            SET 
+                FromDate = @FromDate,
+                ToDate = @ToDate    
+            WHERE ID = @ScheduleID
+        END
         
 
 
         UPDATE dbo.To_Dos
         SET 
             Text = @Text,
-            NoteID = ISNULL(@NewNoteID, @ExistingNoteID),
             IsPrivate = @IsPrivate,
             Checked = @Checked
         WHERE ID = @To_DoID;
@@ -6600,6 +7452,1606 @@ Begin DesignProperties =
    Begin PaneConfigurations = 
       Begin PaneConfiguration = 0
          NumPanes = 4
+         Configuration = "(H (1[25] 4[25] 3[25] 2) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = -120
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "A"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "Q"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 322
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "N"
+            Begin Extent = 
+               Top = 343
+               Left = 48
+               Bottom = 506
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "P"
+            Begin Extent = 
+               Top = 511
+               Left = 48
+               Bottom = 674
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "M"
+            Begin Extent = 
+               Top = 679
+               Left = 48
+               Bottom = 820
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "U"
+            Begin Extent = 
+               Top = 826
+               Left = 48
+               Bottom = 989
+               Right = 246
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+    ' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_AnswerViewByQuestionID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane2', @value=N'     Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_AnswerViewByQuestionID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=2 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_AnswerViewByQuestionID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "A"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "M"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 316
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "U"
+            Begin Extent = 
+               Top = 322
+               Left = 48
+               Bottom = 485
+               Right = 246
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1170
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1350
+         SortOrder = 1410
+         GroupBy = 1350
+         Filter = 1350
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_AssignmentByElementID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_AssignmentByElementID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "C"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "Col"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "N"
+            Begin Extent = 
+               Top = 343
+               Left = 48
+               Bottom = 506
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "S"
+            Begin Extent = 
+               Top = 511
+               Left = 48
+               Bottom = 674
+               Right = 250
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "P"
+            Begin Extent = 
+               Top = 679
+               Left = 48
+               Bottom = 842
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "M"
+            Begin Extent = 
+               Top = 847
+               Left = 48
+               Bottom = 988
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "U"
+            Begin Extent = 
+               Top = 994
+               Left = 48
+               Bottom = 1157
+               Right = 246
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_CardViewByCardID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane2', @value=N'
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_CardViewByCardID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=2 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_CardViewByCardID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "C"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "N"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "S"
+            Begin Extent = 
+               Top = 343
+               Left = 48
+               Bottom = 506
+               Right = 250
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "P"
+            Begin Extent = 
+               Top = 511
+               Left = 48
+               Bottom = 674
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "M"
+            Begin Extent = 
+               Top = 679
+               Left = 48
+               Bottom = 820
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "U"
+            Begin Extent = 
+               Top = 826
+               Left = 48
+               Bottom = 989
+               Right = 246
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+       ' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_CardViewByColumnID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane2', @value=N'  Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_CardViewByColumnID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=2 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_CardViewByColumnID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "C"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "P"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "M"
+            Begin Extent = 
+               Top = 343
+               Left = 48
+               Bottom = 484
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "U"
+            Begin Extent = 
+               Top = 490
+               Left = 48
+               Bottom = 653
+               Right = 246
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1170
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1350
+         SortOrder = 1410
+         GroupBy = 1350
+         Filter = 1350
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ChatViewByProjectID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ChatViewByProjectID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "Col"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1170
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1350
+         SortOrder = 1410
+         GroupBy = 1350
+         Filter = 1350
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ColumnViewByColumnID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ColumnViewByColumnID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "Col"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 241
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "P"
+            Begin Extent = 
+               Top = 7
+               Left = 300
+               Bottom = 175
+               Right = 494
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ColumnViewByProjectID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ColumnViewByProjectID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "PC"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "N"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "P"
+            Begin Extent = 
+               Top = 343
+               Left = 48
+               Bottom = 506
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "M"
+            Begin Extent = 
+               Top = 511
+               Left = 48
+               Bottom = 652
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "U"
+            Begin Extent = 
+               Top = 658
+               Left = 48
+               Bottom = 821
+               Right = 246
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_CommentViewByElementID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_CommentViewByElementID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "D"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "N"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "P"
+            Begin Extent = 
+               Top = 343
+               Left = 48
+               Bottom = 506
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "M"
+            Begin Extent = 
+               Top = 511
+               Left = 48
+               Bottom = 652
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "U"
+            Begin Extent = 
+               Top = 658
+               Left = 48
+               Bottom = 821
+               Right = 246
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1170
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1350
+         SortOrder = 1410
+         GroupBy = 1350
+         Filter = 1350
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_DocumentViewByDocumentID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_DocumentViewByDocumentID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "D"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "N"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "P"
+            Begin Extent = 
+               Top = 343
+               Left = 48
+               Bottom = 506
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_DocumentViewByProjectID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_DocumentViewByProjectID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "E"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "S"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 250
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "N"
+            Begin Extent = 
+               Top = 343
+               Left = 48
+               Bottom = 506
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "P"
+            Begin Extent = 
+               Top = 511
+               Left = 48
+               Bottom = 674
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "M"
+            Begin Extent = 
+               Top = 679
+               Left = 48
+               Bottom = 820
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "U"
+            Begin Extent = 
+               Top = 826
+               Left = 48
+               Bottom = 989
+               Right = 246
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+       ' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_EventViewByEventID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane2', @value=N'  Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_EventViewByEventID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=2 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_EventViewByEventID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
          Configuration = "(H (1[40] 4[20] 2[20] 3) )"
       End
       Begin PaneConfiguration = 1
@@ -6670,7 +9122,7 @@ Begin DesignProperties =
             Begin Extent = 
                Top = 7
                Left = 48
-               Bottom = 293
+               Bottom = 170
                Right = 242
             End
             DisplayFlags = 280
@@ -6705,6 +9157,774 @@ End
 ' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_EventViewByProjectID'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_EventViewByProjectID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "F"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1170
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1350
+         SortOrder = 1410
+         GroupBy = 1350
+         Filter = 1350
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_FileByNoteID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_FileByNoteID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "L"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "N"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1170
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1350
+         SortOrder = 1410
+         GroupBy = 1350
+         Filter = 1350
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ListViewByListID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ListViewByListID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "L"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "N"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "F"
+            Begin Extent = 
+               Top = 343
+               Left = 48
+               Bottom = 506
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1170
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1350
+         SortOrder = 1410
+         GroupBy = 1350
+         Filter = 1350
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ListViewByProjectID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ListViewByProjectID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "M"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 148
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "U"
+            Begin Extent = 
+               Top = 154
+               Left = 48
+               Bottom = 317
+               Right = 246
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1170
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1350
+         SortOrder = 1410
+         GroupBy = 1350
+         Filter = 1350
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_Member'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_Member'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "M"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 148
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "U"
+            Begin Extent = 
+               Top = 154
+               Left = 48
+               Bottom = 317
+               Right = 246
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "A"
+            Begin Extent = 
+               Top = 322
+               Left = 48
+               Bottom = 485
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_MemberProject'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_MemberProject'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "M"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "MN"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "MP"
+            Begin Extent = 
+               Top = 343
+               Left = 48
+               Bottom = 506
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "MPM"
+            Begin Extent = 
+               Top = 511
+               Left = 48
+               Bottom = 652
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "MPMU"
+            Begin Extent = 
+               Top = 658
+               Left = 48
+               Bottom = 821
+               Right = 246
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1170
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1350
+         SortOrder = 1410
+         GroupBy = 1350
+         Filter = 1350
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+En' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_MessageBoardByMessageID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane2', @value=N'd
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_MessageBoardByMessageID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=2 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_MessageBoardByMessageID'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
@@ -6839,6 +10059,248 @@ Begin DesignProperties =
       Begin ColumnWidths = 11
          Column = 1440
          Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_MessageBoardByProjectID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_MessageBoardByProjectID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "Q"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "S"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 250
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_QuestionViewByProjectID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_QuestionViewByProjectID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "S"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "C"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
          Table = 1170
          Output = 720
          Append = 1400
@@ -6853,9 +10315,311 @@ Begin DesignProperties =
       End
    End
 End
-' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_MessageBoardByProjectID'
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_StepViewByCardID'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_MessageBoardByProjectID'
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_StepViewByCardID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "TD"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "P"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "M"
+            Begin Extent = 
+               Top = 343
+               Left = 48
+               Bottom = 484
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "U"
+            Begin Extent = 
+               Top = 490
+               Left = 48
+               Bottom = 653
+               Right = 246
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "S"
+            Begin Extent = 
+               Top = 658
+               Left = 48
+               Bottom = 821
+               Right = 250
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ToDoViewByListID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ToDoViewByListID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "TD"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 170
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "N"
+            Begin Extent = 
+               Top = 175
+               Left = 48
+               Bottom = 338
+               Right = 252
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "P"
+            Begin Extent = 
+               Top = 343
+               Left = 48
+               Bottom = 506
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "M"
+            Begin Extent = 
+               Top = 511
+               Left = 48
+               Bottom = 652
+               Right = 242
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "U"
+            Begin Extent = 
+               Top = 658
+               Left = 48
+               Bottom = 821
+               Right = 246
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ToDoViewByToDoID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'VW_ToDoViewByToDoID'
 GO
 USE [master]
 GO
