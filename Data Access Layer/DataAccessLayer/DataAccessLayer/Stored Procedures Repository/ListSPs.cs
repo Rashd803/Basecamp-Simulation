@@ -12,21 +12,21 @@ public class ListSPs
     /// <summary>
     /// Adds a new list to a project.
     /// </summary>
-    public async Task AddListAsync(int memberId, int projectId, string title, bool isPrivate, string? noteText = null, string? urlLink = null, string? filePath = null, string? caption = null)
+    public async Task AddListAsync(int memberId, int projectId, string title, bool isPrivate, string? noteText = null, string? urlLink = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_AddList @MemberID = {0}, @ProjectID = {1}, @Title = {2}, @NoteText = {3}, @URLLink = {4}, @FilePath = {5}, @Caption = {6}, @IsPrivate = {7}",
-            memberId, projectId, title, noteText, urlLink, filePath, caption, isPrivate);
+            "EXEC SP_AddList @MemberID = {0}, @ProjectID = {1}, @Title = {2}, @NoteText = {3}, @URLLink = {4}, @IsPrivate = {5}",
+            memberId, projectId, title, noteText, urlLink, isPrivate);
     }
 
     /// <summary>
     /// Updates an existing list.
     /// </summary>
-    public async Task UpdateListAsync(int listId, string title, bool isPrivate, string? noteText = null, string? urlLink = null, string? filePath = null, string? caption = null)
+    public async Task UpdateListAsync(int listId, string title, bool isPrivate, string? noteText = null, string? urlLink = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_UpdateList @ListID = {0}, @Title = {1}, @NoteText = {2}, @URLLink = {3}, @FilePath = {4}, @Caption = {5}, @IsPrivate = {6}",
-            listId, title, noteText, urlLink, filePath, caption, isPrivate);
+            "EXEC SP_UpdateList @ListID = {0}, @Title = {1}, @NoteText = {2}, @URLLink = {3}, @IsPrivate = {6}",
+            listId, title, noteText, urlLink, isPrivate);
     }
 
     /// <summary>

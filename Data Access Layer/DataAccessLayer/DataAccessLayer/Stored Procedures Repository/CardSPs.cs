@@ -12,21 +12,21 @@ public class CardSPs
     /// <summary>
     /// Adds a new card to a column.
     /// </summary>
-    public async Task AddCardToColumnAsync(int memberId, int projectId, int columnId, string title, DateTime? fromDate = null, DateTime? toDate = null, string? noteText = null, string? noteUrlLink = null, string? filePath = null, string? fileCaption = null)
+    public async Task AddCardToColumnAsync(int memberId, int projectId, int columnId, string title, DateTime? fromDate = null, DateTime? toDate = null, string? noteText = null, string? noteUrlLink = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_AddCardToColumn @MemberID = {0}, @ProjectID = {1}, @Title = {2}, @FromDate = {3}, @ToDate = {4}, @ColumnID = {5}, @NoteText = {6}, @NoteURLLink = {7}, @FilePath = {8}, @FileCaption = {9}",
-            memberId, projectId, title, fromDate, toDate, columnId, noteText, noteUrlLink, filePath, fileCaption);
+            "EXEC SP_AddCardToColumn @MemberID = {0}, @ProjectID = {1}, @Title = {2}, @FromDate = {3}, @ToDate = {4}, @ColumnID = {5}, @NoteText = {6}, @NoteURLLink = {7}",
+            memberId, projectId, title, fromDate, toDate, columnId, noteText, noteUrlLink);
     }
 
     /// <summary>
     /// Updates an existing card.
     /// </summary>
-    public async Task UpdateCardAsync(int cardId, string title, DateTime? fromDate = null, DateTime? toDate = null, string? noteText = null, string? noteUrlLink = null, string? filePath = null, string? fileCaption = null)
+    public async Task UpdateCardAsync(int cardId, string title, DateTime? fromDate = null, DateTime? toDate = null, string? noteText = null, string? noteUrlLink = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_UpdateCard @CardID = {0}, @Title = {1}, @FromDate = {2}, @ToDate = {3}, @NoteText = {4}, @NoteURLLink = {5}, @FilePath = {6}, @FileCaption = {7}",
-            cardId, title, fromDate, toDate, noteText, noteUrlLink, filePath, fileCaption);
+            "EXEC SP_UpdateCard @CardID = {0}, @Title = {1}, @FromDate = {2}, @ToDate = {3}, @NoteText = {4}, @NoteURLLink = {5}",
+            cardId, title, fromDate, toDate, noteText, noteUrlLink);
     }
 
     /// <summary>

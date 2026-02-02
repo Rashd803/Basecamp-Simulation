@@ -12,21 +12,21 @@ public class DocumentSPs
     /// <summary>
     /// Adds a new document to a project.
     /// </summary>
-    public async Task AddDocumentAsync(string? name, string filePath, int projectId, int memberId, string? noteText, string? noteUrlLink, string? attachmentFilePath, string? attachmentFileCaption, bool isPrivate)
+    public async Task AddDocumentAsync(string? name, string filePath, int projectId, int memberId, string? noteText, string? noteUrlLink, bool isPrivate)
     {
         await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_AddDocument @Name = {0}, @FilePath = {1}, @ProjectID = {2}, @MemberID = {3}, @NoteText = {4}, @NoteURLLink = {5}, @AttachmentFilePath = {6}, @AttachmentFileCaption = {7}, @IsPrivate = {8}",
-            name, filePath, projectId, memberId, noteText, noteUrlLink, attachmentFilePath, attachmentFileCaption, isPrivate);
+            "EXEC SP_AddDocument @Name = {0}, @FilePath = {1}, @ProjectID = {2}, @MemberID = {3}, @NoteText = {4}, @NoteURLLink = {5}, @IsPrivate = {6}",
+            name, filePath, projectId, memberId, noteText, noteUrlLink, isPrivate);
     }
 
     /// <summary>
     /// Updates an existing document.
     /// </summary>
-    public async Task UpdateDocumentAsync(int documentId, string? name, string? filePath, string? noteText, string? noteUrlLink, string? attachmentFilePath, string? attachmentFileCaption, bool? isPrivate)
+    public async Task UpdateDocumentAsync(int documentId, string? name, string? filePath, string? noteText, string? noteUrlLink, bool? isPrivate)
     {
         await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_UpdateDocument @DocumentID = {0}, @Name = {1}, @FilePath = {2}, @NoteText = {3}, @NoteURLLink = {4}, @AttachmentFilePath = {5}, @AttachmentFileCaption = {6}, @IsPrivate = {7}",
-            documentId, name, filePath, noteText, noteUrlLink, attachmentFilePath, attachmentFileCaption, isPrivate);
+            "EXEC SP_UpdateDocument @DocumentID = {0}, @Name = {1}, @FilePath = {2}, @NoteText = {3}, @NoteURLLink = {4}, @IsPrivate = {5}",
+            documentId, name, filePath, noteText, noteUrlLink, isPrivate);
     }
 
     /// <summary>

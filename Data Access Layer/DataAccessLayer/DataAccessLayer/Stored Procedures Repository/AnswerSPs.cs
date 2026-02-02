@@ -12,11 +12,11 @@ public class AnswerSPs
     /// <summary>
     /// Adds a new answer to a question.
     /// </summary>
-    public async Task AddAnswerAsync(int memberId, int questionId, int projectId, string? answerText = null, string? urlLink = null, string? filePath = null, string? caption = null)
+    public async Task AddAnswerAsync(int memberId, int questionId, int projectId, string? answerText = null, string? urlLink = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_AddAnswer @MemberID = {0}, @QuestionID = {1}, @ProjectID = {2}, @AnswerText = {3}, @URLLink = {4}, @FilePath = {5}, @Caption = {6}",
-            memberId, questionId, projectId, answerText, urlLink, filePath, caption);
+            "EXEC SP_AddAnswer @MemberID = {0}, @QuestionID = {1}, @ProjectID = {2}, @AnswerText = {3}, @URLLink = {4}",
+            memberId, questionId, projectId, answerText, urlLink);
     }
 
     /// <summary>

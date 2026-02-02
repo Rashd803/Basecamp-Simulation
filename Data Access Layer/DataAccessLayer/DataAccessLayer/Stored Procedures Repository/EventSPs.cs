@@ -12,21 +12,21 @@ public class EventSPs
     /// <summary>
     /// Adds a new event to a project.
     /// </summary>
-    public async Task AddEventAsync(string name, int projectId, DateTime fromDate, DateTime toDate, bool isPrivate, int memberId, string? urlLink = null, string? noteText = null, string? noteUrlLink = null, string? filePath = null, string? fileCaption = null)
+    public async Task AddEventAsync(string name, int projectId, DateTime fromDate, DateTime toDate, bool isPrivate, int memberId, string? urlLink = null, string? noteText = null, string? noteUrlLink = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_AddEvent @Name = {0}, @ProjectID = {1}, @FromDate = {2}, @ToDate = {3}, @MemberID = {4}, @URLLink = {5}, @NoteText = {6}, @NoteURLLink = {7}, @FilePath = {8}, @FileCaption = {9}, @IsPrivate = {10}",
-            name, projectId, fromDate, toDate, memberId, urlLink, noteText, noteUrlLink, filePath, fileCaption, isPrivate);
+            "EXEC SP_AddEvent @Name = {0}, @ProjectID = {1}, @FromDate = {2}, @ToDate = {3}, @MemberID = {4}, @URLLink = {5}, @NoteText = {6}, @NoteURLLink = {7}, @IsPrivate = {8}",
+            name, projectId, fromDate, toDate, memberId, urlLink, noteText, noteUrlLink, isPrivate);
     }
 
     /// <summary>
     /// Updates an existing event.
     /// </summary>
-    public async Task UpdateEventAsync(int eventId, string name, DateTime fromDate, DateTime toDate, bool isPrivate, string? urlLink = null, string? noteText = null, string? noteUrlLink = null, string? filePath = null, string? fileCaption = null)
+    public async Task UpdateEventAsync(int eventId, string name, DateTime fromDate, DateTime toDate, bool isPrivate, string? urlLink = null, string? noteText = null, string? noteUrlLink = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_UpdateEvent @EventID = {0}, @Name = {1}, @FromDate = {2}, @ToDate = {3}, @URLLink = {4}, @NoteText = {5}, @NoteURLLink = {6}, @FilePath = {7}, @FileCaption = {8}, @IsPrivate = {9}",
-            eventId, name, fromDate, toDate, urlLink, noteText, noteUrlLink, filePath, fileCaption, isPrivate);
+            "EXEC SP_UpdateEvent @EventID = {0}, @Name = {1}, @FromDate = {2}, @ToDate = {3}, @URLLink = {4}, @NoteText = {5}, @NoteURLLink = {6}, @IsPrivate = {7}",
+            eventId, name, fromDate, toDate, urlLink, noteText, noteUrlLink, isPrivate);
     }
 
     /// <summary>
