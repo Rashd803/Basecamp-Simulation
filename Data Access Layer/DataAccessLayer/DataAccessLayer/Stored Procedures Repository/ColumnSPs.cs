@@ -22,7 +22,7 @@ public class ColumnSPs
     /// <summary>
     /// Updates an existing column.
     /// </summary>
-    public async Task UpdateColumnAsync(int columnId, string? title = null, string? description = null, bool isPrivate)
+    public async Task UpdateColumnAsync(int columnId, bool isPrivate, string? title = null, string? description = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_UpdateColumn @ColumnID = {0}, @Title = {1}, @Description = {2}, @IsPrivate = {3}",

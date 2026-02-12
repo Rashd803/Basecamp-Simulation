@@ -26,4 +26,5 @@ public partial class Card
     public virtual ICollection<ProjectComment> ProjectComments { get; set; } = new List<ProjectComment>();
 
     public virtual ICollection<Step> Steps { get; set; } = new List<Step>();
+    public virtual Column Column { get; set; } = null!;
 }

@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class VwCommentViewByElementIdConfig : IEntityTypeConfiguration<CommentByElementIdDTO>
+public class VwCommentViewByElementIdConfig : IEntityTypeConfiguration<CommentDTO>
 {
-    public void Configure(EntityTypeBuilder<CommentByElementIdDTO> entity)
+    public void Configure(EntityTypeBuilder<CommentDTO> entity)
     {
         entity.HasNoKey().ToView("VW_CommentViewByElementID");
         entity.Property(e => e.CardId).HasColumnName("CardID");

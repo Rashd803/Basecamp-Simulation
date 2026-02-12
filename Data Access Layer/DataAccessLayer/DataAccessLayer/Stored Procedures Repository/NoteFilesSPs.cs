@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Data;
+using DataAccessLayer.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -24,9 +25,10 @@ namespace DataAccessLayer.Stored_Procedures_Repository
                 .ToListAsync();
         }
 
-        public async Task AddFileAsync(int NoteID, string FilePath, string FileCaption)
+        public async Task AddFileAsync( int NoteID, string FilePath, string FileCaption)
         {
-            await _context.Database.ExecuteSqlRawAsync("EXEC SP_AddFileToNote @NoteID{0}, @FilePath{1}, @FileCaption{2}",
+            await _context.Database.ExecuteSqlRawAsync(
+                "EXEC SP_AddFileToNote @NoteID{0},@FilePath{1}, @FileCaption{2}",
                  NoteID, FilePath, FileCaption);
         }
 
