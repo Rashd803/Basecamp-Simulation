@@ -12,11 +12,18 @@ public class DocumentSPs
     /// <summary>
     /// Adds a new document to a project.
     /// </summary>
-    public async Task AddDocumentAsync(string? name, string filePath, int projectId, int memberId, string? noteText, string? noteUrlLink, bool isPrivate)
+    public async Task<int> AddDocumentAsync(string? name, string filePath, int projectId, int memberId, string? noteText, string? noteUrlLink, bool isPrivate)
     {
-        await _context.Database.ExecuteSqlRawAsync(
+        var result = await _context.Database.SqlQueryRaw<int>(
             "EXEC SP_AddDocument @Name = {0}, @FilePath = {1}, @ProjectID = {2}, @MemberID = {3}, @NoteText = {4}, @NoteURLLink = {5}, @IsPrivate = {6}",
-            name, filePath, projectId, memberId, noteText, noteUrlLink, isPrivate);
+            name ?? (object) DBNull.Value, 
+            filePath ?? (object)DBNull.Value,
+            projectId, memberId, 
+            noteText ?? (object)DBNull.Value, 
+            noteUrlLink ?? (object)DBNull.Value, 
+            isPrivate).ToListAsync();
+
+        return result.FirstOrDefault();
     }
 
     /// <summary>

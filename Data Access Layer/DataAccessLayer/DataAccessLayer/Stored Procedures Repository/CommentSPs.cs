@@ -74,11 +74,18 @@ public class CommentSPs
     /// </summary>
     public async Task<T?> GetCommentByCommentIdAsync<T>(int commmentId) where T : class
     {
-        var results = await _context.Set<T>()
-            .FromSqlRaw("EXEC SP_GetCommentByCommentID @CommentID = {0}", commmentId)
-            .AsNoTracking()
-            .ToListAsync();
+        try
+        {       
+            var results = await _context.Set<T>()
+                .FromSqlRaw("EXEC SP_GetCommentByCommentID @CommentID = {0}", commmentId)
+                .AsNoTracking()
+                .ToListAsync();
 
-        return results.FirstOrDefault();
+            return results.FirstOrDefault();
+        }
+        catch (Exception ex)
+        {           
+            throw new Exception($"An error occurred while retrieving the comment with ID {commmentId}.", ex);
+        }
     }
 }

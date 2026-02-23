@@ -32,7 +32,7 @@ public class ProjectSPs
     /// <summary>
     /// Updates the publishing information of a project.
     /// </summary>
-    public async Task UpdateProjectPublishingInfoAsync(int projectId, string newname, int memberId)
+    public async Task UpdateProjectAsync(int projectId, string newname, int memberId)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "SP_UpdateProject projectId = {0}, newname = {1}, memberId = {2}",

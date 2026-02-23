@@ -12,11 +12,21 @@ public class CardSPs
     /// <summary>
     /// Adds a new card to a column.
     /// </summary>
-    public async Task AddCardToColumnAsync(int memberId, int projectId, int columnId, string title, DateTime? fromDate = null, DateTime? toDate = null, string? noteText = null, string? noteUrlLink = null)
+    public async Task<int> AddCardToColumnAsync(int memberId, int projectId, int columnId, string title, DateTime? fromDate = null, DateTime? toDate = null, string? noteText = null, string? noteUrlLink = null)
     {
-        await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_AddCardToColumn @MemberID = {0}, @ProjectID = {1}, @Title = {2}, @FromDate = {3}, @ToDate = {4}, @ColumnID = {5}, @NoteText = {6}, @NoteURLLink = {7}",
-            memberId, projectId, title, fromDate, toDate, columnId, noteText, noteUrlLink);
+        var result = await _context.Database.SqlQueryRaw<int>(
+            "EXEC SP_AddCardToColumn @MemberID = {0}, @ProjectID = {1}, @Title = {2}," +
+            " @FromDate = {3}, @ToDate = {4}, @ColumnID = {5}, @NoteText = {6}, @NoteURLLink = {7}",
+            memberId, 
+            projectId, 
+            title ?? (object) DBNull.Value, 
+            fromDate ?? (object)DBNull.Value, 
+            toDate ?? (object)DBNull.Value, 
+            columnId, 
+            noteText ?? (object)DBNull.Value, 
+            noteUrlLink ?? (object)DBNull.Value).ToListAsync();
+
+        return result.FirstOrDefault();
     }
 
     /// <summary>

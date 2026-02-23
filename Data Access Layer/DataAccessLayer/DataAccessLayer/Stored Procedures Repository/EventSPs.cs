@@ -12,11 +12,21 @@ public class EventSPs
     /// <summary>
     /// Adds a new event to a project.
     /// </summary>
-    public async Task AddEventAsync(string name, int projectId, DateTime fromDate, DateTime toDate, bool isPrivate, int memberId, string? urlLink = null, string? noteText = null, string? noteUrlLink = null)
+    public async Task<int> AddEventAsync(string name, int projectId, DateTime fromDate, DateTime toDate, bool isPrivate, int memberId, string? urlLink = null, string? noteText = null, string? noteUrlLink = null)
     {
-        await _context.Database.ExecuteSqlRawAsync(
+        var result = await _context.Database.SqlQueryRaw<int>(
             "EXEC SP_AddEvent @Name = {0}, @ProjectID = {1}, @FromDate = {2}, @ToDate = {3}, @MemberID = {4}, @URLLink = {5}, @NoteText = {6}, @NoteURLLink = {7}, @IsPrivate = {8}",
-            name, projectId, fromDate, toDate, memberId, urlLink, noteText, noteUrlLink, isPrivate);
+            name, 
+            projectId, 
+            fromDate, 
+            toDate, 
+            memberId, 
+            urlLink ?? (object)DBNull.Value, 
+            noteText ?? (object)DBNull.Value, 
+            noteUrlLink ?? (object)DBNull.Value, 
+            isPrivate).ToListAsync();
+
+        return result.FirstOrDefault();
     }
 
     /// <summary>

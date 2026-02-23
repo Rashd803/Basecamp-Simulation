@@ -12,11 +12,21 @@ public class ToDoSPs
     /// <summary>
     /// Adds a new to-do item to a list.
     /// </summary>
-    public async Task AddToDoToListAsync(string text, int listId, int memberId, int projectId, bool isPrivate, DateTime? fromDate = null, DateTime? toDate = null, string? noteText = null, string? noteUrlLink = null)
+    public async Task<int> AddToDoToListAsync(string text, int listId, int memberId, int projectId, bool isPrivate, DateTime? fromDate = null, DateTime? toDate = null, string? noteText = null, string? noteUrlLink = null)
     {
-        await _context.Database.ExecuteSqlRawAsync(
+        var result = await _context.Database.SqlQueryRaw<int>(
             "EXEC SP_AddTo_DoToList @Text = {0}, @ListID = {1}, @MemberID = {2}, @ProjectID = {3}, @FromDate = {4}, @ToDate = {5}, @NoteText = {6}, @NoteURLLink = {7}, @IsPrivate = {8}",
-            text, listId, memberId, projectId, fromDate, toDate, noteText, noteUrlLink, isPrivate);
+            text, 
+            listId, 
+            memberId,
+            projectId,
+            fromDate ?? (object) DBNull.Value,
+            toDate ?? (object)DBNull.Value, 
+            noteText ?? (object)DBNull.Value,
+            noteUrlLink ?? (object)DBNull.Value,
+            isPrivate).ToListAsync();
+
+        return result.FirstOrDefault();
     }
 
     /// <summary>

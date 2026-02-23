@@ -16,11 +16,13 @@ public class MessageBoardSPs
     /// <summary>
     /// Adds a new message to the message board.
     /// </summary>
-    public async Task AddMessageToBoardAsync(int projectId, string? title, int memberId, bool isPrivate, string? noteText = null, string? noteUrlLink = null)
+    public async Task<int> AddMessageToBoardAsync(int projectId, string? title, int memberId, bool isPrivate, string? noteText = null, string? noteUrlLink = null)
     {
-        await _context.Database.ExecuteSqlRawAsync(
+        var result = await _context.Database.SqlQueryRaw<int>(
             "EXEC SP_AddMessageToBoard @ProjectID = {0}, @Title = {1}, @MemberID = {2}, @NoteText = {3}, @NoteURLLink = {4}, @IsPrivate = {7}",
-            projectId, title, memberId, noteText, noteUrlLink, isPrivate);
+            projectId, title, memberId, noteText, noteUrlLink, isPrivate).ToListAsync();
+
+        return result.FirstOrDefault();
     }
 
     /// <summary>

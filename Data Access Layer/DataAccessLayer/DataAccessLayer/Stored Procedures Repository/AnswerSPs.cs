@@ -12,11 +12,14 @@ public class AnswerSPs
     /// <summary>
     /// Adds a new answer to a question.
     /// </summary>
-    public async Task AddAnswerAsync(int memberId, int questionId, int projectId, string? answerText = null, string? urlLink = null)
+    public async Task<int> AddAnswerAsync(int memberId, int questionId, string? answerText = null, string? urllink = null)
     {
-        await _context.Database.ExecuteSqlRawAsync(
-            "EXEC SP_AddAnswer @MemberID = {0}, @QuestionID = {1}, @ProjectID = {2}, @AnswerText = {3}, @URLLink = {4}",
-            memberId, questionId, projectId, answerText, urlLink);
+        var result = await _context.Database.SqlQueryRaw<int>(
+             "EXEC SP_AddAnswer @MemberID = {0}, @QuestionID = {1}, @AnswerText = {2}, @URLLink = {3}",
+             memberId, questionId, answerText ?? (object)DBNull.Value, urllink ?? (object)DBNull.Value).ToListAsync();
+
+        // Return the newly created comment's Note ID
+        return result.FirstOrDefault();
     }
 
     /// <summary>
@@ -46,5 +49,28 @@ public class AnswerSPs
         return await _context.Set<T>().FromSqlRaw("EXEC SP_GetAnswerByQuestionID @QuestionID = {0}", questionId)
             .AsNoTracking()
             .ToListAsync();
+    }
+
+    /// <summary>
+    /// Retrieves a single answer for a given ID.
+    /// </summary>
+    public async Task<T?> GetAnswerByAnswerIdAsync<T>(int answerId) where T : class
+    {
+        try
+        {
+            var results = await _context.Set<T>()
+            .FromSqlRaw("EXEC SP_GetAnswertByAnswerID @AnswerID = {0}", answerId)
+            .AsNoTracking()
+            .ToListAsync();
+            return results.FirstOrDefault();
+        }
+        catch (Exception ex)
+        {
+           
+            throw new Exception($"An error occurred while retrieving the answer with ID {answerId}.", ex);
+        }
+
+
+        
     }
 }

@@ -12,11 +12,11 @@ public class AssignmentSPs
     /// <summary>
     /// Assigns a member to a specific task or event within a project.
     /// </summary>
-    public async Task AddAssignmentAsync(int memberId, int projectId, int? eventId = null, int? toDoId = null, int? cardId = null, int? stepId = null, int? questionId = null)
+    public async Task AddAssignmentAsync(int memberId, int projectId, int? eventId = null, int? todoId = null, int? cardId = null, int? stepId = null, int? questionId = null)
     {
         await _context.Database.ExecuteSqlRawAsync(
             "EXEC SP_AddAssignment @MemberID = {0}, @EventID = {1}, @To_DoID = {2}, @CardID = {3}, @StepID = {4}, @QuestionID = {5}, @ProjectID = {6}",
-            memberId, eventId, toDoId, cardId, stepId, questionId, projectId);
+            memberId, eventId, todoId, cardId, stepId, questionId, projectId);
     }
 
     /// <summary>

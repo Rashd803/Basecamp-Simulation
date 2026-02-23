@@ -12,11 +12,13 @@ public class ListSPs
     /// <summary>
     /// Adds a new list to a project.
     /// </summary>
-    public async Task AddListAsync(int memberId, int projectId, string title, bool isPrivate, string? noteText = null, string? urlLink = null)
+    public async Task<int> AddListAsync(int memberId, int projectId, string title, bool isPrivate, string? noteText = null, string? urlLink = null)
     {
-        await _context.Database.ExecuteSqlRawAsync(
+        var result = await _context.Database.SqlQueryRaw<int>(
             "EXEC SP_AddList @MemberID = {0}, @ProjectID = {1}, @Title = {2}, @NoteText = {3}, @URLLink = {4}, @IsPrivate = {5}",
-            memberId, projectId, title, noteText, urlLink, isPrivate);
+            memberId, projectId, title, noteText, urlLink, isPrivate).ToListAsync();
+
+        return result.FirstOrDefault();
     }
 
     /// <summary>
