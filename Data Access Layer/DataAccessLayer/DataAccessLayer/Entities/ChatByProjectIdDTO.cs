@@ -7,11 +7,11 @@ public partial class ChatByProjectIdDTO
 {
     public int ProjectId { get; set; }
 
-    public string Text { get; set; }
+    public required string Text { get; set; }
 
     public DateTime PublishedAt { get; set; }
 
-    public string Username { get; set; }
+    public required string Username { get; set; }
 
     public bool IsPrivate { get; set; }
 }

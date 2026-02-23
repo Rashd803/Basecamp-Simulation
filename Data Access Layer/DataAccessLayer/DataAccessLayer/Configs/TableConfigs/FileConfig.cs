@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DataAccessLayer.Entities;
 
-public class FileConfig : IEntityTypeConfiguration<File>
+public class FileConfig : IEntityTypeConfiguration<NoteFile>
 {
-    public void Configure(EntityTypeBuilder<File> entity)
+    public void Configure(EntityTypeBuilder<NoteFile> entity)
     {
         entity.HasKey(e => e.Id).HasName("PK__Files__3214EC27106EF2CE");
 

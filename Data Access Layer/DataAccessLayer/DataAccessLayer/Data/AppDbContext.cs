@@ -47,7 +47,7 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<ColumnByProjectIdDTO> VwColumnViewByProjectIds { get; set; }
 
     public virtual DbSet<ProjectComment> Comments { get; set; }
-    public virtual DbSet<CommentDTO> VwCommentViewByElementIds { get; set; }
+    public virtual DbSet<CommentByElementIDDTO> VwCommentViewByElementIds { get; set; }
 
     public virtual DbSet<Document> Documents { get; set; }
     public virtual DbSet<DocumentByDocumentIdDTO> VwDocumentViewByDocumentIds { get; set; }
@@ -66,6 +66,8 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<Invitation> Invitations { get; set; }
     public virtual DbSet<InvitationDTO> VwInvitations { get; set; }
     public virtual DbSet<InvitationProjectDTO> VwInvitationProjects { get; set; }
+
+    public virtual DbSet<Project> Projects { get; set; }
 
     public virtual DbSet<List> Lists { get; set; }
     public virtual DbSet<ListByListIdDTO> VwListViewByListIds { get; set; }

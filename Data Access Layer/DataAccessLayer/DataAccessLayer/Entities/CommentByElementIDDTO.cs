@@ -4,7 +4,7 @@ using DataAccessLayer.Entities;
 
 namespace DataAccessLayer.Entities;
 
-public partial class CommentDTO
+public partial class CommentByElementIDDTO
 
 {
     public int CommentId { get; set; }

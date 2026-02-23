@@ -9,7 +9,7 @@ public partial class Answer
 
     public int QuestionId { get; set; }
 
-    public int AnswerId { get; set; }
+    public int NoteId { get; set; }
 
     public int ProjectId { get; set; }
 
